@@ -36,6 +36,14 @@ Layout:
 
 Follow [_docs/CONV_TYPESCRIPT.md](_docs/CONV_TYPESCRIPT.md) for all TypeScript. Its house style differs from common defaults: tabs, required semicolons, spaces inside parentheses (`if( x )`, `call( a, b )`), double quotes only, no ternaries, `m_` prefix on instance fields, and snake_case wire names for manifest, lock file and cache fields. Two rules are easy to miss: never write to stdout in the MCP server (it carries JSON-RPC), and use the `yaml` `Document` API when writing manifests back.
 
+## Workflow
+
+Solo project; this is an honor system, with no branch protection on `main`.
+
+- **Code changes** go on a short-lived branch named for the work item (`phase1/manifest-parsing`), then through a PR that is squash-merged once CI is green. Delete the branch after merging. Tick the ROADMAP checkbox in the same PR.
+- **Doc-only changes** (`_docs/**`, `README.md`, `CLAUDE.md`, `LICENSE`) are committed directly to `main`. CI skips them through `paths-ignore` in `.github/workflows/ci.yml`; keep that list and this one in sync. Never add `**.md` to it: the fixtures in `test/fixtures/` are Markdown and must run CI.
+- CI (`.github/workflows/ci.yml`) runs install, typecheck, lint, test and build on Linux, macOS and Windows, with Node 22 and 24. Run the same steps locally before opening a PR.
+
 ## What it is
 
 A local-first MCP server (plus a `docctx` CLI) that lets users explicitly declare, per document and per section, which files are authoritative **sources**, which are supporting **context**, and which are **excluded** when an AI drafts or revises docs. The MCP server is the main interface: the AI operates through its tools, and the server asks the user for decisions through MCP elicitation. It flags sections that have gone stale because their sources changed, and it commits verification records and source hashes so CI and teammates see them.

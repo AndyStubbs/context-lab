@@ -1,9 +1,13 @@
 name: CI
 
+# Doc-only changes skip CI. Don't ignore **.md: test fixtures are Markdown.
+# Keep this list in sync with the Workflow section of CLAUDE.md.
 on:
   push:
     branches: [ main ]
+    paths-ignore: [ "_docs/**", "README.md", "CLAUDE.md", "LICENSE" ]
   pull_request:
+    paths-ignore: [ "_docs/**", "README.md", "CLAUDE.md", "LICENSE" ]
   workflow_dispatch:
 
 permissions:
