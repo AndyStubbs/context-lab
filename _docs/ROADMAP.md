@@ -83,11 +83,11 @@ A fresh clone runs install, typecheck, lint and test green in CI on all three op
 ### Work items
 
 **Workspace and manifests (§8, §9)**
-- [ ] Locate the workspace by walking up from the current directory to the nearest `.docctx/`.
-- [ ] Parse `workspace.yaml` and manifests with the `yaml` `Document` API.
-- [ ] Validation with errors that give the file, line and column (§21), covering: missing required fields, `allow_terms` entries that aren't strings, unknown `type`, `status` not in the type's statuses, plan-only fields on non-plans, malformed `{ replace: [...] }`, paths outside the workspace, and the reserved doc paths in §7.
-- [ ] Ship the three default types (`reference`, `guide`, `plan`) when `workspace.yaml` defines none (§11).
-- [ ] Types for the parsed model using the snake_case wire names.
+- [x] Locate the workspace by walking up from the current directory to the nearest `.docctx/`.
+- [x] Parse `workspace.yaml` and manifests with the `yaml` `Document` API.
+- [x] Validation with errors that give the file, line and column (§21), covering: missing required fields, `allow_terms` entries that aren't strings, unknown `type`, `status` not in the type's statuses, plan-only fields on non-plans, malformed `{ replace: [...] }`, paths outside the workspace, and the reserved doc paths in §7.
+- [x] Ship the three default types (`reference`, `guide`, `plan`) when `workspace.yaml` defines none (§11).
+- [x] Types for the parsed model using the snake_case wire names.
 - [ ] Manifest writer: create a manifest at the mirrored path (§7) and update `sources`, `context` and `exclude` for a doc or section with the `yaml` `Document` API, preserving comments and key order. `set_scope` (Phase 3) and verification records (Phase 4) build on it.
 - [ ] Round-trip tests: a manifest with comments, rewritten with a scope change, differs from the original only in the changed lines.
 

@@ -1,5 +1,6 @@
 import { lstat, realpath } from "node:fs/promises";
 import path from "node:path";
+import { isAbsoluteOnAnyPlatform } from "./absolute-path.js";
 import { PathOutsideWorkspaceError } from "./path-outside-workspace-error.js";
 
 /**
@@ -111,17 +112,6 @@ export class WorkspaceRoot {
 			current = parent;
 		}
 	}
-}
-
-function isAbsoluteOnAnyPlatform( slashed: string ): boolean {
-
-	// win32.isAbsolute misses drive-relative paths such as `C:foo`, which are still not
-	// workspace-relative
-	return (
-		path.posix.isAbsolute( slashed ) ||
-		path.win32.isAbsolute( slashed ) ||
-		/^[A-Za-z]:/.test( slashed )
-	);
 }
 
 function isInside( root: string, target: string ): boolean {
