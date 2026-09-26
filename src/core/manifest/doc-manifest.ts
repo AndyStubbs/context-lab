@@ -70,3 +70,8 @@ export interface DocManifest {
 	readonly decided_on?: string;
 	readonly allow_terms?: readonly string[];
 }
+
+/** True for the `{ replace: [...] }` form of `context`. */
+export function isReplaceContext( context: ContextList ): context is { readonly replace: readonly string[] } {
+	return !Array.isArray( context );
+}

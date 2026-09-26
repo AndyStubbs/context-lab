@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ContextLabs has finished Phase 0 (foundations) of [_docs/ROADMAP.md](_docs/ROADMAP.md) and is in Phase 1. The project builds, lints and tests, and contains:
 
 - the path confinement helper (`WorkspaceRoot` in `src/core/paths/`)
-- workspace discovery and `workspace.yaml` parsing (`src/core/workspace/`), and manifest parsing (`src/core/manifest/`). Both validate with file:line:column errors (`ManifestError`, `src/core/yaml/`). The manifest writer is next.
+- workspace discovery and `workspace.yaml` parsing (`src/core/workspace/`), and manifest parsing (`src/core/manifest/`). Both validate with file:line:column errors (`ManifestError`, `src/core/yaml/`).
+- the manifest writer (`prepareScopeChange` / `writeManifestUpdate` over `ManifestEditor` in `src/core/manifest/`): it computes and validates a scope change without writing it, so `set_scope` can ask for approval first, then writes atomically and refuses if the file changed in between
 - a stub `docctx` CLI
 - the fixture workspace at `test/fixtures/basic/`
 

@@ -10,12 +10,19 @@ import { ManifestError } from "./manifest-error.js";
 export class YamlFile {
 
 	private readonly m_file: string;
+	private readonly m_text: string;
 	private readonly m_document: Document.Parsed;
 	private readonly m_lineCounter: LineCounter;
 
-	private constructor( file: string, document: Document.Parsed, lineCounter: LineCounter ) {
+	private constructor(
+		file: string,
+		text: string,
+		document: Document.Parsed,
+		lineCounter: LineCounter
+	) {
 
 		this.m_file = file;
+		this.m_text = text;
 		this.m_document = document;
 		this.m_lineCounter = lineCounter;
 	}
@@ -31,7 +38,7 @@ export class YamlFile {
 
 		const lineCounter = new LineCounter();
 		const document = parseDocument( text, { "lineCounter": lineCounter, "prettyErrors": false } );
-		const yamlFile = new YamlFile( file, document, lineCounter );
+		const yamlFile = new YamlFile( file, text, document, lineCounter );
 
 		const issues: ManifestIssue[] = document.errors.map(
 			( error ) => yamlFile.issueAtOffset( error.pos[ 0 ], error.message )
@@ -54,6 +61,11 @@ export class YamlFile {
 	/** Workspace-relative path, with forward slashes. */
 	get file(): string {
 		return this.m_file;
+	}
+
+	/** The source text the document was parsed from. */
+	get text(): string {
+		return this.m_text;
 	}
 
 	get document(): Document.Parsed {

@@ -88,8 +88,8 @@ A fresh clone runs install, typecheck, lint and test green in CI on all three op
 - [x] Validation with errors that give the file, line and column (§21), covering: missing required fields, `allow_terms` entries that aren't strings, unknown `type`, `status` not in the type's statuses, plan-only fields on non-plans, malformed `{ replace: [...] }`, paths outside the workspace, and the reserved doc paths in §7.
 - [x] Ship the three default types (`reference`, `guide`, `plan`) when `workspace.yaml` defines none (§11).
 - [x] Types for the parsed model using the snake_case wire names.
-- [ ] Manifest writer: create a manifest at the mirrored path (§7) and update `sources`, `context` and `exclude` for a doc or section with the `yaml` `Document` API, preserving comments and key order. `set_scope` (Phase 3) and verification records (Phase 4) build on it.
-- [ ] Round-trip tests: a manifest with comments, rewritten with a scope change, differs from the original only in the changed lines.
+- [x] Manifest writer: create a manifest at the mirrored path (§7) and update `sources`, `context` and `exclude` for a doc or section with the `yaml` `Document` API, preserving comments and key order. `set_scope` (Phase 3) and verification records (Phase 4) build on it.
+- [x] Round-trip tests: a manifest with comments, rewritten with a scope change, differs from the original only in the changed lines.
 
 **Sections (§10)**
 - [ ] Parse markdown with `remark` into mdast and build the section tree from headings, with start and end lines from node positions.
