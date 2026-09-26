@@ -1,0 +1,36 @@
+{
+	"name": "contextlabs",
+	"version": "0.0.0",
+	"description": "Declare which files are sources, context and exclusions for each doc and section, and flag sections whose sources changed.",
+	"type": "module",
+	"engines": {
+		"node": ">=22.12"
+	},
+	"bin": {
+		"docctx": "dist/cli/main.js"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"typecheck": "tsc --noEmit",
+		"lint": "eslint .",
+		"lint:fix": "eslint . --fix",
+		"test": "vitest run",
+		"test:watch": "vitest"
+	},
+	"dependencies": {
+		"commander": "^15.0.0"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@stylistic/eslint-plugin": "^5.10.0",
+		"@types/node": "^22.20.4",
+		"eslint": "^10.11.0",
+		"globals": "^17.12.0",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.70.1",
+		"vitest": "^5.0.2"
+	}
+}

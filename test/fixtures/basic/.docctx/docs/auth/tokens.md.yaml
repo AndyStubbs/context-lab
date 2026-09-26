@@ -1,0 +1,8 @@
+doc: docs/auth/tokens.md
+type: reference
+status: published
+audience: integrators
+
+sources:
+  - src/auth/refresh.ts
+  - specs/auth-v2.md

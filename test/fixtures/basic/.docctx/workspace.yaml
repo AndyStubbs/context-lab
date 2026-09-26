@@ -1,0 +1,31 @@
+version: 1
+
+defaults:
+  context:
+    - docs/_style.md
+    - docs/_glossary.md
+  exclude:
+    - "**/drafts/archive/**"
+    - "**/node_modules/**"
+
+types:
+  reference:
+    statuses: [draft, review, published, deprecated]
+  guide:
+    statuses: [draft, review, published, deprecated]
+  plan:
+    statuses: [draft, proposed, decided, superseded]
+    exclude_from_context_when: [superseded]
+
+glossary:
+  file: docs/_glossary.md
+  banned_terms:
+    - term: "whitelist"
+      prefer: "allowlist"
+    - term: "e-mail"
+      prefer: "email"
+
+settings:
+  hash_algorithm: sha256
+  max_context_bytes: 200000   # get_scope returns no file contents above this (§14)
+  max_diff_bytes: 20000       # per stale section; above this, triage gets a git log summary (§13)

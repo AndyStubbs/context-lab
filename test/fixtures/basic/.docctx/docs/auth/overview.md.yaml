@@ -1,0 +1,19 @@
+doc: docs/auth/overview.md
+type: reference
+status: review
+audience: integrators
+
+sources:            # authoritative facts; the doc may only claim what these support
+  - src/auth/**
+  - specs/auth-v2.md
+context:            # style, framing, related docs
+  - docs/auth/tokens.md
+exclude:
+  - plans/**
+
+sections:
+  token-refresh:
+    sources: [src/auth/refresh.ts]
+  error-codes:
+    sources: [src/auth/errors.ts]
+    context: [docs/_error-format.md]

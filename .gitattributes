@@ -1,0 +1,2 @@
+# Keep LF everywhere so file bytes, and therefore source hashes, match across operating systems
+* text=auto eol=lf

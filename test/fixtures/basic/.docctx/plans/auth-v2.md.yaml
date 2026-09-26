@@ -1,0 +1,10 @@
+doc: plans/auth-v2.md
+type: plan
+status: decided
+decided_on: 2026-09-01
+
+sources:
+  - specs/auth-v2.md
+implements_into:
+  - docs/auth/overview.md
+  - docs/auth/tokens.md
