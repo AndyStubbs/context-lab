@@ -1,6 +1,6 @@
 /**
  * Why a path was refused:
- * - `invalid`: empty, or contains a NUL byte
+ * - `invalid`: empty, contains a NUL byte, or is a negated (`!`) glob pattern
  * - `absolute`: an absolute path on any platform; workspace paths are always relative
  * - `escapes-root`: resolves outside the workspace root before following symlinks
  * - `symlink-escape`: a symlink along the path leads outside the root, dangles or loops
