@@ -60,7 +60,7 @@ The dogfooding checkpoint comes after staleness, not before it (DESIGN.md §21):
 - [x] Source layout: `src/core/`, `src/cli/`, `src/mcp/`. Add a lint rule (for example, `no-restricted-imports`) that fails if `src/core/` imports from `src/cli/`, `src/mcp/` or the MCP SDK.
 - [x] **Path confinement helper** in core, written and tested first, since every later phase depends on it (§18). It resolves against the workspace root, follows symlinks with `realpath`, rejects escapes, and normalizes to workspace-relative forward-slash paths.
 - [x] **Fixture workspaces** under `test/fixtures/`: a small realistic project matching §7 (docs, plans, `src/`, `.docctx/`), plus targeted fixtures for edge cases added as later phases need them.
-- [ ] CI: install, typecheck, lint, test, on Linux, macOS and Windows (path handling differs on Windows).
+- [x] CI: install, typecheck, lint, test, on Linux, macOS and Windows (path handling differs on Windows).
 - [x] Record build, lint, test and single-test commands in `CLAUDE.md`.
 
 ### Decided (DESIGN.md §20)
