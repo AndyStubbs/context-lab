@@ -11,6 +11,7 @@ ContextLabs has finished Phase 0 (foundations) and Phase 1 (file format and scop
 - the manifest writer (`prepareScopeChange` / `writeManifestUpdate` over `ManifestEditor` in `src/core/manifest/`): it computes and validates a scope change without writing it, so `set_scope` can ask for approval first, then writes atomically and refuses if the file changed in between
 - section outlines and keys (`src/core/sections/`): heading tree with line ranges, §10 slugs and disambiguation, orphaned manifest keys
 - scope resolution (`src/core/scope/`): the §9 merge with a reason per file, excluded files and why, type rules via `listManifests`, size budget; `loadScope` is the entry point
+- section history (`SectionHistory` in `src/core/history/`): numbered versions under `.docctx/.history/`, saved only by `write_section` (Phase 3)
 - the `docctx` CLI with `init` and `scope` (`src/cli/`); `runCli` returns the exit code so tests run commands in-process
 - fixture workspaces at `test/fixtures/basic/` and `test/fixtures/scope/`, with golden files in `test/core/scope/__golden__/` (JSON) and `test/cli/__golden__/` (the explain view). After an intended output change, regenerate them with `npx vitest run -u` and review the diff.
 
