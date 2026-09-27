@@ -1,0 +1,22 @@
+doc: docs/guide.md
+type: guide
+status: draft
+
+sources:
+  - src/**             # app, config and secret; generated/ is excluded by default
+  - specs/app.md
+  - specs/missing.md   # doesn't exist: a no-match warning
+context:
+  - plans/**           # old.md is superseded, so the plan type rule drops it
+  - src/app.ts         # also a source, so it stays a source with both reasons
+  - notes/**           # matches nothing
+exclude:
+  - src/secret.ts      # exclude wins over the src/** source
+
+sections:
+  install:
+    sources: [src/app.ts]
+    context: [docs/install-notes.md]
+  configure:
+    context: {replace: [specs/app.md]}
+    exclude: [src/config.ts]

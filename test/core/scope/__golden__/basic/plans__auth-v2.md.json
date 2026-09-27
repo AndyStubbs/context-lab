@@ -1,0 +1,44 @@
+{
+	"doc": "plans/auth-v2.md",
+	"sources": [
+		{
+			"path": "specs/auth-v2.md",
+			"role": "source",
+			"sizeBytes": 171,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "specs/auth-v2.md"
+				}
+			]
+		}
+	],
+	"context": [
+		{
+			"path": "docs/_glossary.md",
+			"role": "context",
+			"sizeBytes": 207,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_glossary.md"
+				}
+			]
+		},
+		{
+			"path": "docs/_style.md",
+			"role": "context",
+			"sizeBytes": 127,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_style.md"
+				}
+			]
+		}
+	],
+	"excluded": [],
+	"replaced": [],
+	"totalBytes": 505,
+	"warnings": []
+}

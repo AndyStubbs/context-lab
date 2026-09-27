@@ -1,0 +1,88 @@
+{
+	"doc": "docs/guide.md",
+	"sources": [
+		{
+			"path": "src/app.ts",
+			"role": "source",
+			"sizeBytes": 26,
+			"reasons": [
+				{
+					"rule": "sections.install.sources",
+					"pattern": "src/app.ts"
+				},
+				{
+					"rule": "context",
+					"pattern": "src/app.ts"
+				}
+			]
+		}
+	],
+	"context": [
+		{
+			"path": "docs/_style.md",
+			"role": "context",
+			"sizeBytes": 30,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_style.md"
+				}
+			]
+		},
+		{
+			"path": "docs/install-notes.md",
+			"role": "context",
+			"sizeBytes": 35,
+			"reasons": [
+				{
+					"rule": "sections.install.context",
+					"pattern": "docs/install-notes.md"
+				}
+			]
+		},
+		{
+			"path": "plans/current.md",
+			"role": "context",
+			"sizeBytes": 25,
+			"reasons": [
+				{
+					"rule": "context",
+					"pattern": "plans/**"
+				}
+			]
+		}
+	],
+	"excluded": [
+		{
+			"path": "plans/old.md",
+			"role": "context",
+			"reasons": [
+				{
+					"rule": "context",
+					"pattern": "plans/**"
+				}
+			],
+			"excludedBy": {
+				"kind": "type-rule",
+				"rule": "types.plan.exclude_from_context_when",
+				"type": "plan",
+				"status": "superseded"
+			}
+		}
+	],
+	"replaced": [
+		{
+			"rule": "sources",
+			"by": "sections.install.sources"
+		}
+	],
+	"totalBytes": 116,
+	"warnings": [
+		{
+			"kind": "no-match",
+			"rule": "context",
+			"pattern": "notes/**"
+		}
+	],
+	"section": "install"
+}

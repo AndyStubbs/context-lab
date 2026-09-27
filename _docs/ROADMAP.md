@@ -98,11 +98,11 @@ A fresh clone runs install, typecheck, lint and test green in CI on all three op
 - [x] Report manifest section keys that match no heading as orphaned.
 
 **Scope resolution (§9)**
-- [ ] Implement the six-step merge order exactly, with a `reason` on every entry (for example, `defaults.context`, `sections.token-refresh.sources`).
-- [ ] Record excluded files and the rule that excluded them, so the explain view can say why a file is *out* as well as in.
-- [ ] Apply type rules (`exclude_from_context_when`) when another tracked doc appears in scope. This needs manifest status lookups for docs in scope, not just the doc being resolved.
-- [ ] Compute the total byte size of the resolved scope and warn when it exceeds `settings.max_context_bytes`.
-- [ ] Golden-file tests for the explain output across the fixture workspaces, including each merge rule and "exclude always wins".
+- [x] Implement the six-step merge order exactly, with a `reason` on every entry (for example, `defaults.context`, `sections.token-refresh.sources`).
+- [x] Record excluded files and the rule that excluded them, so the explain view can say why a file is *out* as well as in.
+- [x] Apply type rules (`exclude_from_context_when`) when another tracked doc appears in scope. This needs manifest status lookups for docs in scope, not just the doc being resolved.
+- [x] Compute the total byte size of the resolved scope and warn when it exceeds `settings.max_context_bytes`.
+- [x] Golden-file tests for the explain output across the fixture workspaces, including each merge rule and "exclude always wins".
 
 **CLI**
 - [ ] `docctx init`: create `.docctx/workspace.yaml` with commented defaults, add `.docctx/cache.json` and `.docctx/.history/` to `.gitignore`, and mark `.docctx/**/*.lock` as `linguist-generated` in `.gitattributes` (creating either file if needed, without touching other lines).

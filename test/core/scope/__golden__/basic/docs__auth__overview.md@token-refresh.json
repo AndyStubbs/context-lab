@@ -1,0 +1,61 @@
+{
+	"doc": "docs/auth/overview.md",
+	"sources": [
+		{
+			"path": "src/auth/refresh.ts",
+			"role": "source",
+			"sizeBytes": 358,
+			"reasons": [
+				{
+					"rule": "sections.token-refresh.sources",
+					"pattern": "src/auth/refresh.ts"
+				}
+			]
+		}
+	],
+	"context": [
+		{
+			"path": "docs/_glossary.md",
+			"role": "context",
+			"sizeBytes": 207,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_glossary.md"
+				}
+			]
+		},
+		{
+			"path": "docs/_style.md",
+			"role": "context",
+			"sizeBytes": 127,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_style.md"
+				}
+			]
+		},
+		{
+			"path": "docs/auth/tokens.md",
+			"role": "context",
+			"sizeBytes": 182,
+			"reasons": [
+				{
+					"rule": "context",
+					"pattern": "docs/auth/tokens.md"
+				}
+			]
+		}
+	],
+	"excluded": [],
+	"replaced": [
+		{
+			"rule": "sources",
+			"by": "sections.token-refresh.sources"
+		}
+	],
+	"totalBytes": 874,
+	"warnings": [],
+	"section": "token-refresh"
+}

@@ -1,0 +1,38 @@
+{
+	"doc": "docs/reference.md",
+	"sources": [
+		{
+			"path": "specs/app.md",
+			"role": "source",
+			"sizeBytes": 42,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "specs/app.md"
+				}
+			]
+		}
+	],
+	"context": [
+		{
+			"path": "docs/guide.md",
+			"role": "context",
+			"sizeBytes": 103,
+			"reasons": [
+				{
+					"rule": "context",
+					"pattern": "docs/guide.md"
+				}
+			]
+		}
+	],
+	"excluded": [],
+	"replaced": [
+		{
+			"rule": "defaults.context",
+			"by": "context"
+		}
+	],
+	"totalBytes": 145,
+	"warnings": []
+}

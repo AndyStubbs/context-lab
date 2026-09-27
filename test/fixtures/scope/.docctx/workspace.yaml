@@ -1,0 +1,7 @@
+version: 1
+
+defaults:
+  context:
+    - docs/_style.md
+  exclude:
+    - "**/generated/**"

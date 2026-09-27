@@ -1,0 +1,7 @@
+doc: plans/current.md
+type: plan
+status: decided
+supersedes: plans/old.md
+
+sources:
+  - specs/app.md

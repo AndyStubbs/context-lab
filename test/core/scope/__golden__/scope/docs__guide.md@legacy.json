@@ -1,0 +1,129 @@
+{
+	"doc": "docs/guide.md",
+	"sources": [
+		{
+			"path": "specs/app.md",
+			"role": "source",
+			"sizeBytes": 42,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "specs/app.md"
+				}
+			]
+		},
+		{
+			"path": "src/app.ts",
+			"role": "source",
+			"sizeBytes": 26,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "src/**"
+				},
+				{
+					"rule": "context",
+					"pattern": "src/app.ts"
+				}
+			]
+		},
+		{
+			"path": "src/config.ts",
+			"role": "source",
+			"sizeBytes": 40,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "src/**"
+				}
+			]
+		}
+	],
+	"context": [
+		{
+			"path": "docs/_style.md",
+			"role": "context",
+			"sizeBytes": 30,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_style.md"
+				}
+			]
+		},
+		{
+			"path": "plans/current.md",
+			"role": "context",
+			"sizeBytes": 25,
+			"reasons": [
+				{
+					"rule": "context",
+					"pattern": "plans/**"
+				}
+			]
+		}
+	],
+	"excluded": [
+		{
+			"path": "plans/old.md",
+			"role": "context",
+			"reasons": [
+				{
+					"rule": "context",
+					"pattern": "plans/**"
+				}
+			],
+			"excludedBy": {
+				"kind": "type-rule",
+				"rule": "types.plan.exclude_from_context_when",
+				"type": "plan",
+				"status": "superseded"
+			}
+		},
+		{
+			"path": "src/generated/schema.ts",
+			"role": "source",
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "src/**"
+				}
+			],
+			"excludedBy": {
+				"kind": "pattern",
+				"rule": "defaults.exclude",
+				"pattern": "**/generated/**"
+			}
+		},
+		{
+			"path": "src/secret.ts",
+			"role": "source",
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "src/**"
+				}
+			],
+			"excludedBy": {
+				"kind": "pattern",
+				"rule": "exclude",
+				"pattern": "src/secret.ts"
+			}
+		}
+	],
+	"replaced": [],
+	"totalBytes": 163,
+	"warnings": [
+		{
+			"kind": "no-match",
+			"rule": "sources",
+			"pattern": "specs/missing.md"
+		},
+		{
+			"kind": "no-match",
+			"rule": "context",
+			"pattern": "notes/**"
+		}
+	],
+	"section": "legacy"
+}

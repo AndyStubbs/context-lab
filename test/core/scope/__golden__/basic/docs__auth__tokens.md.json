@@ -1,0 +1,55 @@
+{
+	"doc": "docs/auth/tokens.md",
+	"sources": [
+		{
+			"path": "specs/auth-v2.md",
+			"role": "source",
+			"sizeBytes": 171,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "specs/auth-v2.md"
+				}
+			]
+		},
+		{
+			"path": "src/auth/refresh.ts",
+			"role": "source",
+			"sizeBytes": 358,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "src/auth/refresh.ts"
+				}
+			]
+		}
+	],
+	"context": [
+		{
+			"path": "docs/_glossary.md",
+			"role": "context",
+			"sizeBytes": 207,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_glossary.md"
+				}
+			]
+		},
+		{
+			"path": "docs/_style.md",
+			"role": "context",
+			"sizeBytes": 127,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_style.md"
+				}
+			]
+		}
+	],
+	"excluded": [],
+	"replaced": [],
+	"totalBytes": 863,
+	"warnings": []
+}
