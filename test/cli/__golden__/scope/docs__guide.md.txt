@@ -1,0 +1,24 @@
+docs/guide.md
+3 sources, 2 context files, 163 B of 200 KB
+
+Sources
+  specs/app.md      42 B  sources: specs/app.md
+  src/app.ts        26 B  sources: src/**
+                          context: src/app.ts
+  src/config.ts     40 B  sources: src/**
+
+Context
+  docs/_style.md    30 B  defaults.context: docs/_style.md
+  plans/current.md  25 B  context: plans/**
+
+Excluded
+  plans/old.md             types.plan.exclude_from_context_when (status superseded)
+                           matched by context: plans/**
+  src/generated/schema.ts  defaults.exclude: **/generated/**
+                           matched by sources: src/**
+  src/secret.ts            exclude: src/secret.ts
+                           matched by sources: src/**
+
+Warnings
+  sources: specs/missing.md matched no files
+  context: notes/** matched no files

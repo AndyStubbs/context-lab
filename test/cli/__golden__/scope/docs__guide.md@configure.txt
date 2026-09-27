@@ -1,0 +1,22 @@
+docs/guide.md § configure
+2 sources, 0 context files, 68 B of 200 KB
+
+Sources
+  specs/app.md  42 B  sources: specs/app.md
+                      sections.configure.context: specs/app.md
+  src/app.ts    26 B  sources: src/**
+
+Excluded
+  src/config.ts            sections.configure.exclude: src/config.ts
+                           matched by sources: src/**
+  src/generated/schema.ts  defaults.exclude: **/generated/**
+                           matched by sources: src/**
+  src/secret.ts            exclude: src/secret.ts
+                           matched by sources: src/**
+
+Replaced
+  defaults.context, by sections.configure.context
+  context, by sections.configure.context
+
+Warnings
+  sources: specs/missing.md matched no files

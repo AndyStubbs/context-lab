@@ -1,5 +1,6 @@
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import path from "node:path";
+import { readTextIfExists } from "../fs/read-text-if-exists.js";
 import { writeFileAtomic } from "../fs/write-file-atomic.js";
 import { checkGlobPattern } from "../paths/glob-pattern.js";
 import type { WorkspaceRoot } from "../paths/workspace-root.js";
@@ -138,17 +139,5 @@ function checkChange( change: ScopeChange ): void {
 	}
 	for( const pattern of patterns ) {
 		checkGlobPattern( pattern );
-	}
-}
-
-async function readTextIfExists( target: string ): Promise<string | undefined> {
-
-	try {
-		return await readFile( target, "utf8" );
-	} catch( error ) {
-		if( ( error as NodeJS.ErrnoException ).code === "ENOENT" ) {
-			return undefined;
-		}
-		throw error;
 	}
 }

@@ -4,15 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-ContextLabs has finished Phase 0 (foundations) of [_docs/ROADMAP.md](_docs/ROADMAP.md) and is in Phase 1. The project builds, lints and tests, and contains:
+ContextLabs has finished Phase 0 (foundations) and Phase 1 (file format and scope) of [_docs/ROADMAP.md](_docs/ROADMAP.md); Phase 2 (cache and section history) is next. The project builds, lints and tests, and contains:
 
 - the path confinement helper (`WorkspaceRoot` in `src/core/paths/`)
 - workspace discovery and `workspace.yaml` parsing (`src/core/workspace/`), and manifest parsing (`src/core/manifest/`). Both validate with file:line:column errors (`ManifestError`, `src/core/yaml/`).
 - the manifest writer (`prepareScopeChange` / `writeManifestUpdate` over `ManifestEditor` in `src/core/manifest/`): it computes and validates a scope change without writing it, so `set_scope` can ask for approval first, then writes atomically and refuses if the file changed in between
 - section outlines and keys (`src/core/sections/`): heading tree with line ranges, §10 slugs and disambiguation, orphaned manifest keys
 - scope resolution (`src/core/scope/`): the §9 merge with a reason per file, excluded files and why, type rules via `listManifests`, size budget; `loadScope` is the entry point
-- a stub `docctx` CLI
-- the fixture workspace at `test/fixtures/basic/`
+- the `docctx` CLI with `init` and `scope` (`src/cli/`); `runCli` returns the exit code so tests run commands in-process
+- fixture workspaces at `test/fixtures/basic/` and `test/fixtures/scope/`, with golden files in `test/core/scope/__golden__/` (JSON) and `test/cli/__golden__/` (the explain view). After an intended output change, regenerate them with `npx vitest run -u` and review the diff.
 
 The spec is [_docs/DESIGN.md](_docs/DESIGN.md) (draft v0.5), and it is authoritative. Read the relevant section before implementing anything.
 
@@ -28,7 +28,11 @@ npm test               # Vitest, all tests
 npm run build          # compile src/ to dist/ (bin: dist/cli/main.js)
 npx vitest run test/core/paths/workspace-root.test.ts            # one file
 npx vitest run test/core/paths/workspace-root.test.ts -t symlink # tests whose name matches
+node dist/cli/main.js init [dir]                  # set up a workspace; safe to re-run
+node dist/cli/main.js scope <doc> [section]       # explain a scope; --json for the raw result
 ```
+
+CLI exit codes: `0` success (warnings included), `1` error (untracked doc, unknown section, invalid manifest, path outside the workspace, no workspace found), `2` usage error. Paths on the command line are relative to the current directory.
 
 Layout:
 

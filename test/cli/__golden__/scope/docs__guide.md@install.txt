@@ -1,0 +1,21 @@
+docs/guide.md § install
+1 source, 3 context files, 116 B of 200 KB
+
+Sources
+  src/app.ts             26 B  sections.install.sources: src/app.ts
+                               context: src/app.ts
+
+Context
+  docs/_style.md         30 B  defaults.context: docs/_style.md
+  docs/install-notes.md  35 B  sections.install.context: docs/install-notes.md
+  plans/current.md       25 B  context: plans/**
+
+Excluded
+  plans/old.md  types.plan.exclude_from_context_when (status superseded)
+                matched by context: plans/**
+
+Replaced
+  sources, by sections.install.sources
+
+Warnings
+  context: notes/** matched no files
