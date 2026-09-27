@@ -1,0 +1,11 @@
+docs/reference.md
+1 source, 1 context file, 145 B of 200 KB
+
+Sources
+  specs/app.md    42 B  sources: specs/app.md
+
+Context
+  docs/guide.md  103 B  context: docs/guide.md
+
+Replaced
+  defaults.context, by context

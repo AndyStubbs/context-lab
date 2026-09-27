@@ -1,0 +1,14 @@
+docs/auth/overview.md § error-codes
+1 source, 4 context files, 704 B of 200 KB
+
+Sources
+  src/auth/errors.ts      61 B  sections.error-codes.sources: src/auth/errors.ts
+
+Context
+  docs/_error-format.md  127 B  sections.error-codes.context: docs/_error-format.md
+  docs/_glossary.md      207 B  defaults.context: docs/_glossary.md
+  docs/_style.md         127 B  defaults.context: docs/_style.md
+  docs/auth/tokens.md    182 B  context: docs/auth/tokens.md
+
+Replaced
+  sources, by sections.error-codes.sources

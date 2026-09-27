@@ -105,8 +105,8 @@ A fresh clone runs install, typecheck, lint and test green in CI on all three op
 - [x] Golden-file tests for the explain output across the fixture workspaces, including each merge rule and "exclude always wins".
 
 **CLI**
-- [ ] `docctx init`: create `.docctx/workspace.yaml` with commented defaults, add `.docctx/cache.json` and `.docctx/.history/` to `.gitignore`, and mark `.docctx/**/*.lock` as `linguist-generated` in `.gitattributes` (creating either file if needed, without touching other lines).
-- [ ] `docctx scope <doc> [section]`: print the resolved scope with reasons, the excluded files, and the size.
+- [x] `docctx init`: create `.docctx/workspace.yaml` with commented defaults, add `.docctx/cache.json` and `.docctx/.history/` to `.gitignore`, and mark `.docctx/**/*.lock` as `linguist-generated` in `.gitattributes` (creating either file if needed, without touching other lines).
+- [x] `docctx scope <doc> [section]`: print the resolved scope with reasons, the excluded files, and the size.
 
 ### Exit criterion
 

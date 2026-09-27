@@ -1,0 +1,8 @@
+plans/current.md
+1 source, 1 context file, 72 B of 200 KB
+
+Sources
+  specs/app.md    42 B  sources: specs/app.md
+
+Context
+  docs/_style.md  30 B  defaults.context: docs/_style.md
