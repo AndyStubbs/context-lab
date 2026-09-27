@@ -4,8 +4,8 @@
 |                  |                    |
 | ---------------- | ------------------ |
 | **Status**       | Draft              |
-| **Version**      | 0.4                |
-| **Last updated** | September 25, 2026 |
+| **Version**      | 0.5                |
+| **Last updated** | September 26, 2026 |
 | **Based on**     | [`DESIGN.md`](DESIGN.md) v0.5 |
 
 
@@ -21,19 +21,19 @@ Section references (§) point to DESIGN.md unless stated otherwise. Coding rules
 
 ## 2. Phase overview
 
-| Phase | Name                          | Design milestone | Depends on | Outcome                                                    |
-| ----- | ----------------------------- | ---------------- | ---------- | ---------------------------------------------------------- |
-| 0     | Foundations                   | —                | —          | Buildable, linted, tested empty project; key libraries chosen |
-| 1     | File format and scope         | M1               | 0          | Manifests parse and write; `docctx scope` explains any doc or section |
-| 2     | Cache and section history     | M1               | 1          | Disposable `cache.json`; section history in `.history/`   |
-| 3     | MCP server MVP                | M1               | 2          | Scopes set by approval, context loaded and sections written from Claude Code and Claude Desktop |
-| 4     | Staleness                     | M2               | 3          | Stale detection, verification records and lock files, triage tools, CI check |
-| 5     | Dogfooding checkpoint         | M1 + M2 exit     | 4          | Two weeks of real use; exit criterion met or not           |
-| 6     | Orphans, moves and relinks    | M2               | 5          | Moves and heading renames no longer break manifests        |
-| 7     | Plans and terminology         | M3               | 5          | Plan lifecycle, `plan-to-docs`, banned-term check          |
-| 8     | Claude Code plugin            | M4               | 5          | Skill and post-edit staleness hook                         |
-| 9     | Release and client coverage   | —                | 5, then each later phase | Published to npm; client matrix verified     |
-| —     | Later                         | Later            | —          | Local UI, search, resources, non-markdown sections         |
+| Phase | Name                          | Design milestone | Depends on | Status      | Outcome                                                    |
+| ----- | ----------------------------- | ---------------- | ---------- | ----------- | ---------------------------------------------------------- |
+| 0     | Foundations                   | —                | —          | Done        | Buildable, linted, tested empty project; key libraries chosen |
+| 1     | File format and scope         | M1               | 0          | Done        | Manifests parse and write; `docctx scope` explains any doc or section |
+| 2     | Cache and section history     | M1               | 1          | Done        | Disposable `cache.json`; section history in `.history/`   |
+| 3     | MCP server MVP                | M1               | 2          | Next        | Scopes set by approval, context loaded and sections written from Claude Code and Claude Desktop |
+| 4     | Staleness                     | M2               | 3          | Not started | Stale detection, verification records and lock files, triage tools, CI check |
+| 5     | Dogfooding checkpoint         | M1 + M2 exit     | 4          | Not started | Two weeks of real use; exit criterion met or not           |
+| 6     | Orphans, moves and relinks    | M2               | 5          | Not started | Moves and heading renames no longer break manifests        |
+| 7     | Plans and terminology         | M3               | 5          | Not started | Plan lifecycle, `plan-to-docs`, banned-term check          |
+| 8     | Claude Code plugin            | M4               | 5          | Not started | Skill and post-edit staleness hook                         |
+| 9     | Release and client coverage   | —                | 5, then each later phase | Not started | Published to npm; client matrix verified     |
+| —     | Later                         | Later            | —          | —           | Local UI, search, resources, non-markdown sections         |
 
 The dogfooding checkpoint comes after staleness, not before it (DESIGN.md §21): staleness is what no other tool provides, so the project is judged with it in place. Phases 6, 7 and 8 all depend on the checkpoint but not on each other, so they can be done in any order after it. Phase 9 is a release track: a preview release follows Phase 5, and each later phase ends with a release.
 
@@ -135,6 +135,36 @@ Deleting `cache.json`, or replacing it with garbage, changes no command or tool 
 ## 6. Phase 3 — MCP server MVP
 
 **Goal:** the M1 MCP surface running over stdio and working in Claude Code and Claude Desktop.
+
+### Delivery plan
+
+Phase 3 lands as five PRs, ordered so the server and its test harness exist before anything can write. The two write paths are then built and tested one at a time, and prompts come last because they build on all of it.
+
+| # | Branch                       | Contents                                                                                     |
+| - | ---------------------------- | -------------------------------------------------------------------------------------------- |
+| 1 | `phase3/server-read-tools`   | Server skeleton, `docctx serve`, `instructions`, and the read-only tools `get_status`, `read_section`, `get_scope` |
+| 2 | `phase3/set-scope`           | Elicitation detection and `set_scope` with both approval paths                               |
+| 3 | `phase3/write-section`       | Section replacement in core, the history save, and the `write_section` tool                  |
+| 4 | `phase3/prompts`             | `draft-section`, `revise-section`, and argument completion                                   |
+| 5 | (doc-only, on `main`)        | Manual checks in Claude Code and Claude Desktop, and the tool-definition size baseline (§17) |
+
+**PR 1, `phase3/server-read-tools`:**
+
+- **Server:**
+  - Add `@modelcontextprotocol/sdk` and `zod` for argument schemas. The existing lint rule keeps both out of `src/core/`.
+  - `docctx serve` starts a stdio server. It finds the workspace from the current directory, and `--workspace <dir>` or the `DOCCTX_WORKSPACE` environment variable override that. It logs only to stderr, which the `no-console` rule in `src/mcp/` enforces.
+  - The `instructions` field carries the §14 summary, with a test that fails above 2 KB.
+- **Errors:** expected failures (untracked doc, unknown section, invalid manifest, path outside the workspace) come back as `isError: true` results, never thrown. One shared mapping turns core errors into results.
+- **Tools:**
+  - `get_status`: without `doc`, tracked docs by type and status, plus problem manifests and orphaned sections; with `doc`, the section outline (keys, titles, line ranges). Section states come in Phase 4.
+  - `read_section`: one section's text, or the whole doc for a single-unit doc.
+  - `get_scope`: the resolved scope with reasons and sizes. With `content: true`, it also returns file contents; above `max_context_bytes`, only paths, sizes and a warning. It never truncates (§14.1).
+- **Tests:** integration tests drive the server through the SDK client against both fixtures, over an in-memory transport and over a real stdio run of `dist/`. The stdio run proves nothing else writes to stdout.
+- **Decisions settled when PR 1 is planned:**
+  1. The tool output format: text, JSON in a text block, or structured content with an output schema. It applies to every later tool.
+  2. Whether the `get_status` workspace summary lists problem manifests in full or only counts them.
+  3. Whether `read_section` includes subsections by default. `write_section` must match.
+  4. Tool arguments take workspace-relative paths, unlike the CLI, since the AI has no current directory.
 
 ### Work items
 
