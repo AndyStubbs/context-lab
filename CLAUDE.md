@@ -9,6 +9,7 @@ ContextLabs has finished Phase 0 (foundations) of [_docs/ROADMAP.md](_docs/ROADM
 - the path confinement helper (`WorkspaceRoot` in `src/core/paths/`)
 - workspace discovery and `workspace.yaml` parsing (`src/core/workspace/`), and manifest parsing (`src/core/manifest/`). Both validate with file:line:column errors (`ManifestError`, `src/core/yaml/`).
 - the manifest writer (`prepareScopeChange` / `writeManifestUpdate` over `ManifestEditor` in `src/core/manifest/`): it computes and validates a scope change without writing it, so `set_scope` can ask for approval first, then writes atomically and refuses if the file changed in between
+- section outlines and keys (`src/core/sections/`): heading tree with line ranges, §10 slugs and disambiguation, orphaned manifest keys
 - a stub `docctx` CLI
 - the fixture workspace at `test/fixtures/basic/`
 
