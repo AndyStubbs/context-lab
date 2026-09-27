@@ -92,10 +92,10 @@ A fresh clone runs install, typecheck, lint and test green in CI on all three op
 - [x] Round-trip tests: a manifest with comments, rewritten with a scope change, differs from the original only in the changed lines.
 
 **Sections (§10)**
-- [ ] Parse markdown with `remark` into mdast and build the section tree from headings, with start and end lines from node positions.
-- [ ] GitHub-style slugs. If using `github-slugger`, use its stateless `slug()` function only: its built-in de-duplication appends `-1`, but the design disambiguates duplicates by parent path (`setup/install`).
-- [ ] Treat non-markdown docs as a single unit with no sections.
-- [ ] Report manifest section keys that match no heading as orphaned.
+- [x] Parse markdown with `remark` into mdast and build the section tree from headings, with start and end lines from node positions.
+- [x] GitHub-style slugs. If using `github-slugger`, use its stateless `slug()` function only: its built-in de-duplication appends `-1`, but the design disambiguates duplicates by parent path (`setup/install`).
+- [x] Treat non-markdown docs as a single unit with no sections.
+- [x] Report manifest section keys that match no heading as orphaned.
 
 **Scope resolution (§9)**
 - [ ] Implement the six-step merge order exactly, with a `reason` on every entry (for example, `defaults.context`, `sections.token-refresh.sources`).

@@ -315,10 +315,11 @@ The server must be able to show the resolved scope (`docctx scope <doc> [section
 
 - A section is a markdown heading and everything below it until the next heading of the same or higher level.
 - Section keys are GitHub-style slugs of the heading text (lowercase, spaces to hyphens, punctuation removed).
-- Duplicate slugs within a doc are disambiguated by parent path, for example `setup/install` and `upgrade/install`.
+- Duplicate slugs within a doc are disambiguated by parent path, for example `setup/install` and `upgrade/install`. The key uses the shortest path suffix that no other heading with that slug shares. When even the full path is shared (two `## Install` under one `# Setup`), the first heading keeps it and later ones get `-1`, `-2`, and so on, as GitHub does for anchors. Such keys depend on heading order, so the server warns about them.
+- Only top-level headings start sections. Headings inside block quotes, lists, HTML or code blocks don't, and YAML or TOML front matter is skipped. A heading with no text has no key, but it still ends the section before it.
 - If a section key in a manifest no longer matches any heading, the server reports it as **orphaned**. It is never silently dropped.
 
-Non-markdown docs (for example, OpenAPI files) are tracked as a single unit with no sections in v1.
+Non-markdown docs (for example, OpenAPI files) are tracked as a single unit with no sections in v1. Markdown means the `.md` and `.markdown` extensions; `.mdx` is a single unit for now.
 
 ---
 
