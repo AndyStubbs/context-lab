@@ -15,6 +15,25 @@ export function manifestPathFor( docPath: string ): string {
 }
 
 /**
+ * The doc a manifest path mirrors: the inverse of `manifestPathFor`. The manifest's own `doc`
+ * field is authoritative (DESIGN.md §9); this is for manifests too broken to read it from.
+ *
+ * @returns `undefined` for paths that aren't manifest paths.
+ */
+export function docPathForManifest( manifestPath: string ): string | undefined {
+
+	const prefix = `${DOCCTX_DIR}/`;
+	if( !manifestPath.startsWith( prefix ) || !manifestPath.endsWith( ".yaml" ) ) {
+		return undefined;
+	}
+	const doc = manifestPath.slice( prefix.length, -".yaml".length );
+	if( doc.length === 0 ) {
+		return undefined;
+	}
+	return doc;
+}
+
+/**
  * Workspace-relative path of a doc's lock file, beside its manifest (DESIGN.md §13).
  *
  * @param docPath Normalized workspace-relative doc path, as `WorkspaceRoot.resolve` returns.

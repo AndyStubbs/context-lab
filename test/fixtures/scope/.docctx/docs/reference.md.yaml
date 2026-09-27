@@ -1,0 +1,7 @@
+doc: docs/reference.md
+type: reference
+status: published
+
+sources:
+  - specs/app.md
+context: {replace: [docs/guide.md]}

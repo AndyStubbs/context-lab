@@ -307,6 +307,16 @@ The resolved scope for a doc or section is computed as follows:
 
 The server must be able to show the resolved scope (`docctx scope <doc> [section]`, and the `get_scope` and `set_scope` tools), including *why* each file is in or out.
 
+In practice:
+
+- Steps 4 and 5 are applied to the expanded files, since patterns can't be subtracted from patterns. The result is the same as the order above.
+- Exclude patterns filter `sources` as well as `context`. Type rules do too, so a superseded plan never appears in another doc's scope, even when named as a source.
+- A file matched by both `sources` and `context` is a source. Every entry lists all the rules and patterns that matched it.
+- A pattern that matches no files, such as a typo or a deleted source, is reported as a warning. It isn't an error.
+- If another doc in scope has an invalid manifest, its status can't be known, so that doc is left out and the broken manifest is reported.
+- `.git/` and `.docctx/` are never in scope. `*` and `**` don't match dotfiles, but a pattern that names a dot folder does (`.github/**`). Excludes match dotfiles too.
+- Symlinked directories aren't followed. Any symlink that leads outside the workspace is reported as excluded (§18).
+
 ---
 
 

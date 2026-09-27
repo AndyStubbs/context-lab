@@ -1,0 +1,98 @@
+{
+	"doc": "docs/guide.md",
+	"sources": [
+		{
+			"path": "specs/app.md",
+			"role": "source",
+			"sizeBytes": 42,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "specs/app.md"
+				},
+				{
+					"rule": "sections.configure.context",
+					"pattern": "specs/app.md"
+				}
+			]
+		},
+		{
+			"path": "src/app.ts",
+			"role": "source",
+			"sizeBytes": 26,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "src/**"
+				}
+			]
+		}
+	],
+	"context": [],
+	"excluded": [
+		{
+			"path": "src/config.ts",
+			"role": "source",
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "src/**"
+				}
+			],
+			"excludedBy": {
+				"kind": "pattern",
+				"rule": "sections.configure.exclude",
+				"pattern": "src/config.ts"
+			}
+		},
+		{
+			"path": "src/generated/schema.ts",
+			"role": "source",
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "src/**"
+				}
+			],
+			"excludedBy": {
+				"kind": "pattern",
+				"rule": "defaults.exclude",
+				"pattern": "**/generated/**"
+			}
+		},
+		{
+			"path": "src/secret.ts",
+			"role": "source",
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "src/**"
+				}
+			],
+			"excludedBy": {
+				"kind": "pattern",
+				"rule": "exclude",
+				"pattern": "src/secret.ts"
+			}
+		}
+	],
+	"replaced": [
+		{
+			"rule": "defaults.context",
+			"by": "sections.configure.context"
+		},
+		{
+			"rule": "context",
+			"by": "sections.configure.context"
+		}
+	],
+	"totalBytes": 68,
+	"warnings": [
+		{
+			"kind": "no-match",
+			"rule": "sources",
+			"pattern": "specs/missing.md"
+		}
+	],
+	"section": "configure"
+}

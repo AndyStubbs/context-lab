@@ -1,0 +1,6 @@
+doc: api/openapi.yaml
+type: reference
+status: draft
+
+sources:
+  - src/app.ts

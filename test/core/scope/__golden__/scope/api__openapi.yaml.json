@@ -1,0 +1,33 @@
+{
+	"doc": "api/openapi.yaml",
+	"sources": [
+		{
+			"path": "src/app.ts",
+			"role": "source",
+			"sizeBytes": 26,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "src/app.ts"
+				}
+			]
+		}
+	],
+	"context": [
+		{
+			"path": "docs/_style.md",
+			"role": "context",
+			"sizeBytes": 30,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_style.md"
+				}
+			]
+		}
+	],
+	"excluded": [],
+	"replaced": [],
+	"totalBytes": 56,
+	"warnings": []
+}

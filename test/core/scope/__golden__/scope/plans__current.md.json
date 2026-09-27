@@ -1,0 +1,33 @@
+{
+	"doc": "plans/current.md",
+	"sources": [
+		{
+			"path": "specs/app.md",
+			"role": "source",
+			"sizeBytes": 42,
+			"reasons": [
+				{
+					"rule": "sources",
+					"pattern": "specs/app.md"
+				}
+			]
+		}
+	],
+	"context": [
+		{
+			"path": "docs/_style.md",
+			"role": "context",
+			"sizeBytes": 30,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_style.md"
+				}
+			]
+		}
+	],
+	"excluded": [],
+	"replaced": [],
+	"totalBytes": 72,
+	"warnings": []
+}

@@ -1,0 +1,6 @@
+doc: plans/old.md
+type: plan
+status: superseded
+
+sources:
+  - specs/app.md

@@ -1,0 +1,72 @@
+{
+	"doc": "docs/auth/overview.md",
+	"sources": [
+		{
+			"path": "src/auth/errors.ts",
+			"role": "source",
+			"sizeBytes": 61,
+			"reasons": [
+				{
+					"rule": "sections.error-codes.sources",
+					"pattern": "src/auth/errors.ts"
+				}
+			]
+		}
+	],
+	"context": [
+		{
+			"path": "docs/_error-format.md",
+			"role": "context",
+			"sizeBytes": 127,
+			"reasons": [
+				{
+					"rule": "sections.error-codes.context",
+					"pattern": "docs/_error-format.md"
+				}
+			]
+		},
+		{
+			"path": "docs/_glossary.md",
+			"role": "context",
+			"sizeBytes": 207,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_glossary.md"
+				}
+			]
+		},
+		{
+			"path": "docs/_style.md",
+			"role": "context",
+			"sizeBytes": 127,
+			"reasons": [
+				{
+					"rule": "defaults.context",
+					"pattern": "docs/_style.md"
+				}
+			]
+		},
+		{
+			"path": "docs/auth/tokens.md",
+			"role": "context",
+			"sizeBytes": 182,
+			"reasons": [
+				{
+					"rule": "context",
+					"pattern": "docs/auth/tokens.md"
+				}
+			]
+		}
+	],
+	"excluded": [],
+	"replaced": [
+		{
+			"rule": "sources",
+			"by": "sections.error-codes.sources"
+		}
+	],
+	"totalBytes": 704,
+	"warnings": [],
+	"section": "error-codes"
+}
