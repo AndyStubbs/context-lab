@@ -120,11 +120,11 @@ For every fixture, `docctx scope` output matches the golden files, and a person 
 
 ### Work items
 
-- [ ] Cache interface in core, backed by `.docctx/cache.json`, with a format version. Rebuild when the file is missing, corrupt or from another version.
-- [ ] Atomic writes for the cache and history files: write to a temporary file, then rename. (History is done: versions are written to a temporary file and hard-linked into place, which also keeps concurrent saves from sharing a number. The cache half comes with the cache.)
-- [ ] Cache contents for M1: each tracked doc's last known content hash, and the reverse lookup from source file to dependent sections. File hashes are added in Phase 4.
+- [x] Cache interface in core, backed by `.docctx/cache.json`, with a format version. Rebuild when the file is missing, corrupt or from another version.
+- [x] Atomic writes for the cache and history files: write to a temporary file, then rename. (History versions are hard-linked into place instead, which also keeps concurrent saves from sharing a number.)
+- [x] Cache contents: a fingerprint (stat and hash) per file, which covers each tracked doc's last known content hash and the Phase 4 source hashes. The reverse lookup from source file to dependent sections moved to Phase 8, next to the hook that is its only user.
 - [x] Section history store in `.docctx/.history/`: save a version (numbered per doc and section, `@doc` for docs without sections) and fetch one. Only `write_section` writes to it.
-- [ ] Incremental refresh on demand (Open question 4, resolved): before serving each request, recompute only what changed, using mtime and size, instead of rebuilding everything. No file watching.
+- [x] Incremental refresh on demand (Open question 4, resolved): before serving each request, recompute only what changed, instead of rebuilding everything. No file watching. The pre-check compares size, mtime, ctime and inode, and distrusts files modified within 2 s of being hashed (§13).
 
 ### Exit criterion
 
@@ -178,11 +178,11 @@ In Claude Code, the AI proposes a scope for a fixture doc, the user approves it 
 ### Work items
 
 **Hashing and state**
-- [ ] File hashing with the configured algorithm, using mtime and size as a pre-check before rehashing (§13).
+- [x] File hashing with the configured algorithm, with a stat pre-check before rehashing (§13). Done in Phase 2 (`WorkspaceCache.hashFile`).
 - [ ] Verification records in manifests (§13), written only by the server with the `yaml` `Document` API: `verified.at`, `verified.by` (`human` or `ai`), `verified.via` (`elicitation` or `chat`) for human decisions, and an optional note.
 - [ ] Lock files (`<doc path>.lock`), written in full by the server with sorted keys: format version, hash algorithm, and per section the matching `at` and a 16-hex-character hash of every resolved source.
 - [ ] Section state computation from both files: **stale** if a verified source's hash changed, a source was deleted, or the resolved source list itself changed; **unverified** if never verified. Apply the §13 mismatch table, so a disagreement between manifest and lock file never reads as verified.
-- [ ] Add current file hashes to the cache, using the mtime and size pre-check.
+- [x] Add current file hashes to the cache. Done in Phase 2.
 - [ ] Test on a fresh clone of a fixture repo with no `cache.json`: states must come out the same as on the original machine.
 - [ ] Mismatch tests: a lock entry with a different `at`, a missing lock file, and a lock entry with no manifest record.
 
@@ -272,6 +272,7 @@ A superseded plan never appears in another doc's resolved scope. `docctx check` 
 
 - [ ] Plugin package that preconfigures the MCP server.
 - [ ] Skill that expands on the server's `instructions` field: the operating model (§5), when to propose scopes, stale-section triage (§13), section slugs and "only claim what sources support". Kept short, since it loads into context. Slash commands come from the MCP prompts, so the plugin adds none.
+- [ ] Reverse lookup from source file to dependent sections, kept in the cache (moved from Phase 2). It must stay correct when new files match existing globs.
 - [ ] **Post-edit staleness hook:** after a source file is edited, report which doc sections depend on it. This uses the reverse lookup in the cache.
 - [ ] A fast CLI entry point for hooks (for example, `docctx hook <event>`), because hooks run on every matching tool call and must add little latency.
 
