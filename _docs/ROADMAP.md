@@ -121,9 +121,9 @@ For every fixture, `docctx scope` output matches the golden files, and a person 
 ### Work items
 
 - [ ] Cache interface in core, backed by `.docctx/cache.json`, with a format version. Rebuild when the file is missing, corrupt or from another version.
-- [ ] Atomic writes for the cache and history files: write to a temporary file, then rename.
+- [ ] Atomic writes for the cache and history files: write to a temporary file, then rename. (History is done: versions are written to a temporary file and hard-linked into place, which also keeps concurrent saves from sharing a number. The cache half comes with the cache.)
 - [ ] Cache contents for M1: each tracked doc's last known content hash, and the reverse lookup from source file to dependent sections. File hashes are added in Phase 4.
-- [ ] Section history store in `.docctx/.history/`: save a version (numbered per doc and section, `@doc` for docs without sections) and fetch one. Only `write_section` writes to it.
+- [x] Section history store in `.docctx/.history/`: save a version (numbered per doc and section, `@doc` for docs without sections) and fetch one. Only `write_section` writes to it.
 - [ ] Incremental refresh on demand (Open question 4, resolved): before serving each request, recompute only what changed, using mtime and size, instead of rebuilding everything. No file watching.
 
 ### Exit criterion
