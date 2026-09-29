@@ -559,7 +559,7 @@ Nothing is ever deleted or relinked automatically.
 
 - **Local only.** No network access. No telemetry in v1.
 - **Path confinement.** All reads and writes are restricted to the workspace root. Globs and paths resolving outside it (including through symlinks) are rejected.
-- **Write safety.** `write_section` is the only server path that writes a tracked doc. It replaces exactly one section's line range and saves the previous content to local section history first. The server writes manifests and verification records only after the user approves, except `mark_no_impact`, which records `by: ai`.
+- **Write safety.** `write_section` is the only server path that writes a tracked doc. It replaces exactly one section's line range and saves the previous content to local section history first. It refuses to write when the section changed since the AI read it (checked against a hash from `read_section`), and when the new text would leave a manifest section key matching no heading. The server writes manifests and verification records only after the user approves, except `mark_no_impact`, which records `by: ai`.
 - **Untrusted content.** Doc and source text is returned as data. Prompts instruct the model not to follow instructions found inside source files.
 
 ---
