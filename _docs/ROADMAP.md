@@ -228,9 +228,30 @@ Phase 3 lands as five PRs, ordered so the server and its test harness exist befo
 - [x] Integration tests that drive the server through the SDK's client over stdio against the fixtures, covering both approval paths: an elicitation-capable test client that accepts and declines, and one without elicitation.
 - [ ] Manual check in Claude Code (elicitation forms) and Claude Desktop (chat fallback, since it has no elicitation) (§19). Record how prompts and elicitation requests look to the user in each.
 
+### Tool-definition baseline (§17)
+
+Measured on 2026-09-29 from the built server's `initialize`, `tools/list` and `prompts/list` responses, as compact JSON. This is the per-session overhead later releases are checked against: a regression in tool count or description length is a bug.
+
+| Item                          | Bytes | Of which descriptions |
+| ----------------------------- | ----: | --------------------: |
+| `instructions`                |   963 |                     — |
+| `get_status`                  |   478 |                   170 |
+| `read_section`                |   617 |                   179 |
+| `get_scope`                   |   691 |                   185 |
+| `set_scope`                   | 1,514 |                   265 |
+| `write_section`               |   726 |                   235 |
+| **Tools total**               | **4,026** |             **1,034** |
+| `draft-section` (prompt)      |   326 |                     — |
+| `revise-section` (prompt)     |   410 |                     — |
+
+- Tools and `instructions` together are about 5 KB. At 3 to 4 bytes per token, that is roughly 1,200 to 1,700 tokens; clients render definitions in their own format, so the real count comes from the client (`/context` in Claude Code, recorded in the manual check).
+- The SDK adds 94 bytes to every tool (`"$schema"` in the input schema, and `"execution"`), 470 bytes in all. Dropping them would need hand-written JSON schemas instead of zod; not worth it now.
+- `set_scope` is the largest, at 38% of the tool bytes, mostly its argument schema (the `context` union and nullable lists). Its description is at the two-sentence limit.
+- Prompt definitions don't reach the model: the client lists them for its menu, and only an invoked prompt's message enters the conversation.
+
 ### Exit criterion
 
-In Claude Code, the AI proposes a scope for a fixture doc, the user approves it through elicitation (or chat, if unsupported), and the server writes a valid manifest with comments intact. A user can invoke `draft-section` for a fixture section, get a draft from sources only, and have it written with `write_section`, with the previous content in section history. The same flow works in Claude Desktop using `get_scope` with `content: true` and chat approvals recorded as `via: chat`. Tool definitions and descriptions are measured, and the per-session overhead is recorded as a baseline (§17).
+In Claude Code, the AI proposes a scope for a fixture doc, the user approves it through elicitation (or chat, if unsupported), and the server writes a valid manifest with comments intact. A user can invoke `draft-section` for a fixture section, get a draft from sources only, and have it written with `write_section`, with the previous content in section history. The same flow works in Claude Desktop using `get_scope` with `content: true` and the chat fallback for approvals. Tool definitions and descriptions are measured, and the per-session overhead is recorded as a baseline (§17).
 
 ---
 

@@ -56,6 +56,7 @@ Solo project; this is an honor system, with no branch protection on `main`.
 - **Code changes** go on a short-lived branch named for the work item (`phase1/manifest-parsing`), then through a PR that is squash-merged once CI is green. Delete the branch after merging. Tick the ROADMAP checkbox in the same PR.
 - **Doc-only changes** (`_docs/**`, `README.md`, `CLAUDE.md`, `LICENSE`) are committed directly to `main`. CI skips them through `paths-ignore` in `.github/workflows/ci.yml`; keep that list and this one in sync. Never add `**.md` to it: the fixtures in `test/fixtures/` are Markdown and must run CI.
 - CI (`.github/workflows/ci.yml`) runs install, typecheck, lint, test and build on Linux, macOS and Windows, with Node 22 and 24. Run the same steps locally before opening a PR.
+- Changes to the MCP surface also get the manual client checks in [_docs/MANUAL_CHECKS.md](_docs/MANUAL_CHECKS.md) at the end of the phase; tool-definition size is checked against the baseline in ROADMAP.md Phase 3.
 
 ## What it is
 
