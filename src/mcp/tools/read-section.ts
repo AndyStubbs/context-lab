@@ -1,7 +1,7 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { loadSection } from "../../core/sections/load-section.js";
-import { sectionHash } from "../../core/sections/section-hash.js";
 import { runTool } from "../run-tool.js";
+import { needsSectionMessage, sectionLabel } from "../section-label.js";
 import { DOC_ARG, SECTION_ARG } from "../tool-args.js";
 import { errorResult, fileBlock } from "../tool-result.js";
 
@@ -19,22 +19,13 @@ export function registerReadSection( server: McpServer, startDir: string ): void
 	}, async ( args ) => runTool( startDir, async ( workspace ) => {
 
 		const loaded = await loadSection( workspace.root, workspace.config, args.doc, args.section );
-		const doc = loaded.outline.doc;
-		if( loaded.section === undefined ) {
 
-			// Serve slices, not whole files (DESIGN.md §5 principle 4)
-			if( loaded.outline.sections.length > 0 ) {
-				return errorResult(
-					`${doc} has sections, so pass a section key; get_status with this doc lists them.`
-				);
-			}
-			return { "content": [ fileBlock( `${doc} (hash ${sectionHash( loaded.text )})`, loaded.text ) ] };
+		// Serve slices, not whole files (DESIGN.md §5 principle 4)
+		if( loaded.section === undefined && loaded.outline.sections.length > 0 ) {
+			return errorResult( needsSectionMessage( loaded.outline.doc ) );
 		}
 
-		// The hash is what write_section needs back (PR 3 decision 4)
-		const section = loaded.section;
-		const label = `${doc} § ${section.key} (lines ${section.startLine}-${section.endLine}, ` +
-			`hash ${sectionHash( loaded.text )})`;
-		return { "content": [ fileBlock( label, loaded.text ) ] };
+		// The label carries the hash write_section needs back (PR 3 decision 4)
+		return { "content": [ fileBlock( sectionLabel( loaded ), loaded.text ) ] };
 	} ) );
 }

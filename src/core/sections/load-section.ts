@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import type { DocManifest } from "../manifest/doc-manifest.js";
 import { readDocManifest } from "../manifest/read-doc-manifest.js";
 import type { WorkspaceRoot } from "../paths/workspace-root.js";
 import { UnknownSectionError } from "../scope/unknown-section-error.js";
@@ -13,6 +14,9 @@ import { sliceLines } from "./slice-lines.js";
  */
 export interface SectionText {
 	readonly outline: DocOutline;
+
+	/** The doc's manifest; the doc is always tracked. */
+	readonly manifest: DocManifest;
 
 	/** Absent when the whole doc was asked for. */
 	readonly section?: Section;
@@ -46,7 +50,7 @@ export async function loadSection(
 	const text = await readFile( doc.absolute, "utf8" );
 	const outline = buildOutline( doc.relative, text );
 	if( section === undefined ) {
-		return { "outline": outline, "text": text };
+		return { "outline": outline, "manifest": loaded.manifest, "text": text };
 	}
 
 	if( outline.kind === "single" ) {
@@ -58,6 +62,7 @@ export async function loadSection(
 	}
 	return {
 		"outline": outline,
+		"manifest": loaded.manifest,
 		"section": found,
 		"text": sliceLines( text, found.startLine, found.endLine )
 	};
