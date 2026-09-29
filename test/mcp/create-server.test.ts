@@ -28,15 +28,24 @@ describe( "the MCP server", () => {
 		expect( m_client.getServerVersion()?.name ).toBe( "contextlabs" );
 	} );
 
-	it( "lists the read-only tools, each described in at most two sentences", async () => {
+	it( "lists its tools, each described in at most two sentences", async () => {
 
 		const { tools } = await m_client.listTools();
-		expect( tools.map( ( tool ) => tool.name ) ).toEqual( [ "get_status", "read_section", "get_scope" ] );
+		expect( tools.map( ( tool ) => tool.name ) )
+			.toEqual( [ "get_status", "read_section", "get_scope", "set_scope" ] );
 		for( const tool of tools ) {
 			const sentences = ( tool.description ?? "" ).split( /(?<=\.)\s+/ );
 			expect( sentences.length, tool.name ).toBeLessThanOrEqual( 2 );
-			expect( tool.annotations?.readOnlyHint, tool.name ).toBe( true );
 		}
+	} );
+
+	it( "marks the read tools read-only, and not the tools that write", async () => {
+
+		const { tools } = await m_client.listTools();
+		const readOnly = tools
+			.filter( ( tool ) => tool.annotations?.readOnlyHint === true )
+			.map( ( tool ) => tool.name );
+		expect( readOnly ).toEqual( [ "get_status", "read_section", "get_scope" ] );
 	} );
 
 	it( "returns invalid arguments as a tool error", async () => {

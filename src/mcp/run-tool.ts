@@ -1,6 +1,8 @@
 import path from "node:path";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import { ManifestWriteError } from "../core/manifest/manifest-write-error.js";
 import { ReservedDocPathError } from "../core/manifest/reserved-doc-path-error.js";
+import { TrackedFieldsError } from "../core/manifest/tracked-fields-error.js";
 import { PathOutsideWorkspaceError } from "../core/paths/path-outside-workspace-error.js";
 import type { WorkspaceRoot } from "../core/paths/workspace-root.js";
 import { UnknownSectionError } from "../core/scope/unknown-section-error.js";
@@ -58,12 +60,17 @@ function describeToolError( error: unknown, root: WorkspaceRoot | undefined ): s
 		}
 		return `${error.message}. Tool paths are relative to the workspace root, ${root.absolute}.`;
 	}
+	if( error instanceof ManifestWriteError && error.reason === "changed-on-disk" ) {
+		return `${error.path} changed while the user was deciding, so nothing was written. ` +
+			"Propose the change again.";
+	}
 	if( error instanceof UnknownSectionError && error.reason === "not-a-heading" ) {
 		return `${error.message}. get_status with this doc lists its section keys.`;
 	}
 	if(
 		error instanceof UnknownSectionError || error instanceof UntrackedDocError ||
-		error instanceof ReservedDocPathError || error instanceof ManifestError
+		error instanceof ReservedDocPathError || error instanceof ManifestError ||
+		error instanceof ManifestWriteError || error instanceof TrackedFieldsError
 	) {
 		return error.message;
 	}

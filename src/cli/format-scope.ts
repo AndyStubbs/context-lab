@@ -1,6 +1,6 @@
 import { describeExclusion, describeReason, describeReplaced } from "../core/scope/describe-scope.js";
 import type { ResolvedScope, ScopeEntry, ScopeWarning } from "../core/scope/resolved-scope.js";
-import { formatBytes } from "./format-bytes.js";
+import { formatBytes } from "../core/scope/format-bytes.js";
 
 const INDENT = "  ";
 const GAP = "  ";

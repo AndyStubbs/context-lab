@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { formatBytes } from "../../src/cli/format-bytes.js";
 import { formatScope } from "../../src/cli/format-scope.js";
 import type { ResolvedScope } from "../../src/core/scope/resolved-scope.js";
 
@@ -88,20 +87,5 @@ describe( "formatScope", () => {
 			"totalBytes": 2
 		}, 1000 );
 		expect( text.split( "\n" )[ 1 ] ).toBe( "1 source, 1 context file, 2 B of 1 KB" );
-	} );
-} );
-
-describe( "formatBytes", () => {
-
-	it( "uses 1000-based units with at most one decimal", () => {
-
-		expect( formatBytes( 0 ) ).toBe( "0 B" );
-		expect( formatBytes( 999 ) ).toBe( "999 B" );
-		expect( formatBytes( 1000 ) ).toBe( "1 KB" );
-		expect( formatBytes( 1500 ) ).toBe( "1.5 KB" );
-		expect( formatBytes( 1049 ) ).toBe( "1 KB" );
-		expect( formatBytes( 200000 ) ).toBe( "200 KB" );
-		expect( formatBytes( 999999 ) ).toBe( "1 MB" );
-		expect( formatBytes( 1234567 ) ).toBe( "1.2 MB" );
 	} );
 } );
