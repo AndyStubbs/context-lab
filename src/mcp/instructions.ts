@@ -1,13 +1,14 @@
 /**
  * The server's `instructions` field: the operating model in short (DESIGN.md §5, §14). Claude
  * Code caps it at 2 KB, and a test enforces that. It names only tools the server has, so each
- * Phase 3 PR adds the lines for its own tools.
+ * PR adds the lines for its own tools.
  */
 export const INSTRUCTIONS = `ContextLabs records, for each doc and section, which files are its authoritative \
 sources and which are supporting context, so docs are written from the right material.
 
-- The user decides which files count as sources. Never edit files under .docctx/ yourself; \
-the server writes them.
+- The user decides which files count as sources. Propose a scope with set_scope, which asks \
+the user before writing; one call covers the doc or one section. Never edit files under \
+.docctx/ yourself.
 - Paths are relative to the workspace root. Sections are named by key, such as token-refresh \
 or setup/install; get_status with a doc lists them.
 - Before drafting or revising a section, call get_scope for it. Read the listed files yourself \

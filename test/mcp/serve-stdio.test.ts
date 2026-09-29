@@ -1,5 +1,5 @@
 import { execFile, spawn } from "node:child_process";
-import { mkdtemp, realpath, rm } from "node:fs/promises";
+import { mkdtemp, readFile, realpath, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -7,12 +7,14 @@ import { promisify } from "node:util";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { beforeAll, describe, expect, it } from "vitest";
-import { callToolJson } from "../helpers/mcp-client.js";
-import { fixturePath } from "../helpers/scratch-fixture.js";
+import type { ElicitHandler } from "../helpers/mcp-client.js";
+import { callToolJson, createClient } from "../helpers/mcp-client.js";
+import { copyFixture, fixturePath, removeScratch } from "../helpers/scratch-fixture.js";
 
 const REPO_ROOT = fileURLToPath( new URL( "../..", import.meta.url ) );
 const MAIN = path.join( REPO_ROOT, "dist/cli/main.js" );
 const TSC = path.join( REPO_ROOT, "node_modules/typescript/bin/tsc" );
+const SETUP_SOURCES = { "doc": "docs/auth/overview.md", "section": "setup", "sources": [ "src/auth/errors.ts" ] };
 
 /** What a `docctx serve` process wrote and how it ended. */
 interface ProcessResult {
@@ -45,6 +47,18 @@ async function runServe( args: readonly string[], input: string, cwd = REPO_ROOT
 	return { "code": await exited, "stdout": stdout, "stderr": stderr };
 }
 
+/** Connects an SDK client to `docctx serve` from `dist/`, over stdio, for `workspace`. */
+async function connectStdio( workspace: string, elicit?: ElicitHandler ): Promise<Client> {
+
+	const client = createClient( elicit );
+	await client.connect( new StdioClientTransport( {
+		"command": process.execPath,
+		"args": [ MAIN, "serve", "--workspace", workspace ],
+		"stderr": "ignore"
+	} ) );
+	return client;
+}
+
 function request( id: number, method: string, params: Record<string, unknown> ): string {
 	return `${JSON.stringify( { "jsonrpc": "2.0", "id": id, "method": method, "params": params } )}\n`;
 }
@@ -75,7 +89,8 @@ describe( "docctx serve over stdio", () => {
 		await client.connect( transport );
 		try {
 			const { tools } = await client.listTools();
-			expect( tools.map( ( tool ) => tool.name ) ).toEqual( [ "get_status", "read_section", "get_scope" ] );
+			expect( tools.map( ( tool ) => tool.name ) )
+				.toEqual( [ "get_status", "read_section", "get_scope", "set_scope" ] );
 			const status = await callToolJson( client, "get_status", {} );
 			expect( status ).toMatchObject( { "workspace": fixturePath( "basic" ) } );
 			const args = { "doc": "docs/auth/overview.md", "content": true };
@@ -113,6 +128,51 @@ describe( "docctx serve over stdio", () => {
 			expect( result.stderr ).toContain( "No .docctx/ directory found" );
 		} finally {
 			await rm( empty, { "recursive": true, "force": true } );
+		}
+	} );
+
+	it( "writes a scope the user approves through elicitation", async () => {
+
+		const scratch = await copyFixture( "basic" );
+		try {
+			const asked: string[] = [];
+			const client = await connectStdio( scratch, ( params ) => {
+				asked.push( params.message );
+				return { "action": "accept" };
+			} );
+			try {
+				const written = await callToolJson( client, "set_scope", SETUP_SOURCES );
+				expect( written ).toMatchObject( { "result": "written" } );
+			} finally {
+				await client.close();
+			}
+			expect( asked ).toHaveLength( 1 );
+			const manifest = await readFile( path.join( scratch, ".docctx/docs/auth/overview.md.yaml" ), "utf8" );
+			expect( manifest ).toContain( "  setup:\n    sources: [src/auth/errors.ts]\n" );
+		} finally {
+			await removeScratch( scratch );
+		}
+	} );
+
+	it( "writes a scope the user approves in chat, through the preview token", async () => {
+
+		const scratch = await copyFixture( "basic" );
+		try {
+			const client = await connectStdio( scratch );
+			try {
+				const preview = await callToolJson( client, "set_scope", SETUP_SOURCES ) as Record<string, unknown>;
+				expect( preview[ "result" ] ).toBe( "preview" );
+				const written = await callToolJson( client, "set_scope", {
+					...SETUP_SOURCES,
+					"user_decision": "accept",
+					"preview_token": preview[ "preview_token" ]
+				} );
+				expect( written ).toMatchObject( { "result": "written" } );
+			} finally {
+				await client.close();
+			}
+		} finally {
+			await removeScratch( scratch );
 		}
 	} );
 } );

@@ -184,16 +184,16 @@ Phase 3 lands as five PRs, ordered so the server and its test harness exist befo
 - [x] stdio server using the official TypeScript MCP SDK. All logging goes to stderr.
 - [x] Resolve the workspace from the server's working directory, with an optional argument or environment variable to override it.
 
-- [ ] `instructions` field with a short summary of the operating model (§5, §14): propose scopes through `set_scope`, never edit `.docctx/` files directly, and only make claims the sources support. Keep it under 2 KB, Claude Code's cap, and add a test that fails if it grows past that. The field and its test landed in PR 1; it names only tools that exist, so the `set_scope` line lands with PR 2.
+- [x] `instructions` field with a short summary of the operating model (§5, §14): propose scopes through `set_scope`, never edit `.docctx/` files directly, and only make claims the sources support. Keep it under 2 KB, Claude Code's cap, and add a test that fails if it grows past that. It names only tools that exist, so later PRs add the lines for their own tools.
 - [x] `docctx serve` subcommand that starts the stdio server.
-- [ ] Detect at connection whether the client supports elicitation, and choose the approval path for `set_scope` from that (§14.2).
+- [x] Detect at connection whether the client supports elicitation, and choose the approval path for `set_scope` from that (§14.2).
 
 **Tools (§14.1, M1 subset)**
 - [x] `get_status`: workspace summary, or a doc's outline. Section states come in Phase 4.
 - [x] `read_section`
 - [x] `get_scope`, including `content: true`. Above `max_context_bytes`, return paths, sizes and a warning instead of contents. Never truncate (§14.1).
-- [ ] `set_scope`: validate the proposal, resolve it, ask the user through elicitation, and write the manifest only on accept. Without elicitation, return the preview and a `preview_token`, and accept `user_decision` with the token on a second call. With elicitation, reject both parameters (§14.2).
-- [ ] Elicitation messages of at most three lines, naming the doc, the section, the files and the resolved size.
+- [x] `set_scope`: validate the proposal, resolve it, ask the user through elicitation, and write the manifest only on accept. Without elicitation, return the preview and a `preview_token`, and accept `user_decision` with the token on a second call. With elicitation, reject both parameters (§14.2).
+- [x] Elicitation messages of at most three lines, naming the doc, the section, the files and the resolved size.
 - [ ] `write_section`: save the previous content to section history, then rewrite only that section's line range (§18).
 - [x] Expected failures returned as `isError: true` results. Descriptions kept to one or two sentences.
 
@@ -204,7 +204,7 @@ Phase 3 lands as five PRs, ordered so the server and its test harness exist befo
 - [ ] Argument completion for `doc` and `section` (MCP `completion/complete`) where clients support it. This is optional but greatly improves usability.
 
 **Verification**
-- [ ] Integration tests that drive the server through the SDK's client over stdio against the fixtures, covering both approval paths: an elicitation-capable test client that accepts and declines, and one without elicitation.
+- [x] Integration tests that drive the server through the SDK's client over stdio against the fixtures, covering both approval paths: an elicitation-capable test client that accepts and declines, and one without elicitation.
 - [ ] Manual check in Claude Code (elicitation forms) and Claude Desktop (chat fallback, since it has no elicitation) (§19). Record how prompts and elicitation requests look to the user in each.
 
 ### Exit criterion
