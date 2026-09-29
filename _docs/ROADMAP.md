@@ -160,11 +160,11 @@ Phase 3 lands as five PRs, ordered so the server and its test harness exist befo
   - `read_section`: one section's text, or the whole doc for a single-unit doc.
   - `get_scope`: the resolved scope with reasons and sizes. With `content: true`, it also returns file contents; above `max_context_bytes`, only paths, sizes and a warning. It never truncates (§14.1).
 - **Tests:** integration tests drive the server through the SDK client against both fixtures, over an in-memory transport and over a real stdio run of `dist/`. The stdio run proves nothing else writes to stdout.
-- **Decisions settled when PR 1 is planned:**
-  1. The tool output format: text, JSON in a text block, or structured content with an output schema. It applies to every later tool.
-  2. Whether the `get_status` workspace summary lists problem manifests in full or only counts them.
-  3. Whether `read_section` includes subsections by default. `write_section` must match.
-  4. Tool arguments take workspace-relative paths, unlike the CLI, since the AI has no current directory.
+- **Decisions (settled when PR 1 was planned; they apply to every later tool):**
+  1. **Output format.** Metadata is compact JSON (no indentation) in one text block, with `snake_case` keys to match the tool arguments (`user_decision`) and manifest fields. File and section contents go in their own plain-text blocks, one per file, each starting with a header line naming the path, so the model reads code without JSON escaping. No `structuredContent` or `outputSchema` in v1: output schemas grow the tool definitions sent every session (§17), and clients show the model the text content anyway. Adding them later is non-breaking. Each tool maps core types to its result rather than passing them through, which is also where the output is kept compact.
+  2. **`get_status` lists problem manifests in full** (manifest path, doc, one-line message), and orphaned sections as doc plus key. The list is empty in a healthy workspace, a count gives the AI nothing to act on, and no other tool returns the details. Cap it later only if dogfooding shows noise.
+  3. **`read_section` includes subsections**, with no flag, because §10 defines a section that way and `Section.endLine` already does. `write_section` replaces the same range, so rewriting a parent rewrites its subsections; its result warns about manifest keys that no longer match a heading.
+  4. **Tool arguments take workspace-relative paths** (unlike the CLI, since the AI has no current directory), and sections are given by key (`setup/install`), not title. Absolute paths are rejected even inside the workspace, so every path still goes through `WorkspaceRoot.resolve()`. The error names the workspace root so the AI can retry, `get_status` reports the root, and the `instructions` field says paths are relative to it.
 
 ### Work items
 
