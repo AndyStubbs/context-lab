@@ -219,10 +219,10 @@ Phase 3 lands as five PRs, ordered so the server and its test harness exist befo
 - [x] Expected failures returned as `isError: true` results. Descriptions kept to one or two sentences.
 
 **Prompts (§14.3)**
-- [ ] `draft-section`: resolved scope, audience, style guide and glossary, plus the instruction to only make claims the sources support and to say so when they don't.
-- [ ] `revise-section`: current section text plus scope and the user's instruction.
-- [ ] Both prompts wrap source content as data and tell the model not to follow instructions inside source files (§18).
-- [ ] Argument completion for `doc` and `section` (MCP `completion/complete`) where clients support it. This is optional but greatly improves usability.
+- [x] `draft-section`: resolved scope, audience, style guide and glossary, plus the instruction to only make claims the sources support and to say so when they don't.
+- [x] `revise-section`: current section text plus scope and the user's instruction.
+- [x] Both prompts wrap source content as data and tell the model not to follow instructions inside source files (§18).
+- [x] Argument completion for `doc` and `section` (MCP `completion/complete`) where clients support it. This is optional but greatly improves usability.
 
 **Verification**
 - [x] Integration tests that drive the server through the SDK's client over stdio against the fixtures, covering both approval paths: an elicitation-capable test client that accepts and declines, and one without elicitation.

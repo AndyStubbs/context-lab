@@ -56,7 +56,7 @@ describe( "tool errors", () => {
 		const doc = path.join( m_scratch, "docs/auth/overview.md" );
 		const absolute = await expectToolError( "get_status", { "doc": doc } );
 		expect( absolute ).toContain( "(absolute)" );
-		expect( absolute ).toContain( `Tool paths are relative to the workspace root, ${m_scratch}.` );
+		expect( absolute ).toContain( `Paths are relative to the workspace root, ${m_scratch}.` );
 
 		const escaping = await expectToolError( "read_section", { "doc": "../outside.md" } );
 		expect( escaping ).toContain( "(escapes-root)" );

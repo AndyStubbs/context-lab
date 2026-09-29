@@ -1,5 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { INSTRUCTIONS } from "./instructions.js";
+import { registerDraftSection } from "./prompts/draft-section.js";
+import { registerReviseSection } from "./prompts/revise-section.js";
 import { registerGetScope } from "./tools/get-scope.js";
 import { registerGetStatus } from "./tools/get-status.js";
 import { registerReadSection } from "./tools/read-section.js";
@@ -15,7 +17,7 @@ export interface ServerOptions {
 }
 
 /**
- * Builds the MCP server with its tools, not yet connected to a transport (DESIGN.md §14).
+ * Builds the MCP server with its tools and prompts, not yet connected to a transport (DESIGN.md §14).
  */
 export function createServer( options: ServerOptions ): McpServer {
 
@@ -28,5 +30,7 @@ export function createServer( options: ServerOptions ): McpServer {
 	registerGetScope( server, options.startDir );
 	registerSetScope( server, options.startDir );
 	registerWriteSection( server, options.startDir );
+	registerDraftSection( server, options.startDir );
+	registerReviseSection( server, options.startDir );
 	return server;
 }

@@ -48,6 +48,16 @@ describe( "the MCP server", () => {
 		expect( readOnly ).toEqual( [ "get_status", "read_section", "get_scope" ] );
 	} );
 
+	it( "lists the draft-section and revise-section prompts with their arguments", async () => {
+
+		const { prompts } = await m_client.listPrompts();
+		const listed = prompts.map( ( prompt ) => [ prompt.name, ( prompt.arguments ?? [] ).map( describeArgument ) ] );
+		expect( listed ).toEqual( [
+			[ "draft-section", [ "doc", "section?" ] ],
+			[ "revise-section", [ "doc", "section?", "instruction" ] ]
+		] );
+	} );
+
 	it( "returns invalid arguments as a tool error", async () => {
 
 		const output = await callTool( m_client, "get_scope", { "doc": 42 } );
@@ -55,3 +65,12 @@ describe( "the MCP server", () => {
 		expect( output.texts[ 0 ] ).toContain( "Invalid arguments" );
 	} );
 } );
+
+/** An argument's name, with `?` when it is optional. */
+function describeArgument( argument: { readonly name: string; readonly required?: boolean | undefined } ): string {
+
+	if( argument.required === true ) {
+		return argument.name;
+	}
+	return `${argument.name}?`;
+}
