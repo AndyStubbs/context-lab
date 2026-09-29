@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { sectionHash } from "../../../src/core/sections/section-hash.js";
 import { callTool, connectClient } from "../../helpers/mcp-client.js";
 import { fixturePath } from "../../helpers/scratch-fixture.js";
 
@@ -21,12 +22,10 @@ describe( "read_section", () => {
 
 		const args = { "doc": "docs/auth/overview.md", "section": "setup" };
 		const output = await callTool( m_client, "read_section", args );
+		const text = "## Setup\n\n### Install\n\nInstall the client library with `npm install @example/auth`.\n\n";
 		expect( output ).toEqual( {
 			"isError": false,
-			"texts": [
-				"==> docs/auth/overview.md § setup (lines 17-22) <==\n" +
-				"## Setup\n\n### Install\n\nInstall the client library with `npm install @example/auth`.\n\n"
-			]
+			"texts": [ `==> docs/auth/overview.md § setup (lines 17-22, hash ${sectionHash( text )}) <==\n${text}` ]
 		} );
 	} );
 
@@ -37,7 +36,7 @@ describe( "read_section", () => {
 		try {
 			const output = await callTool( client, "read_section", { "doc": "api/openapi.yaml" } );
 			const text = await readFile( path.join( scope, "api/openapi.yaml" ), "utf8" );
-			expect( output.texts ).toEqual( [ `==> api/openapi.yaml <==\n${text}` ] );
+			expect( output.texts ).toEqual( [ `==> api/openapi.yaml (hash ${sectionHash( text )}) <==\n${text}` ] );
 		} finally {
 			await client.close();
 		}

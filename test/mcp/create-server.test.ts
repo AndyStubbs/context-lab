@@ -32,7 +32,7 @@ describe( "the MCP server", () => {
 
 		const { tools } = await m_client.listTools();
 		expect( tools.map( ( tool ) => tool.name ) )
-			.toEqual( [ "get_status", "read_section", "get_scope", "set_scope" ] );
+			.toEqual( [ "get_status", "read_section", "get_scope", "set_scope", "write_section" ] );
 		for( const tool of tools ) {
 			const sentences = ( tool.description ?? "" ).split( /(?<=\.)\s+/ );
 			expect( sentences.length, tool.name ).toBeLessThanOrEqual( 2 );

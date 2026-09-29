@@ -7,6 +7,7 @@ import { PathOutsideWorkspaceError } from "../core/paths/path-outside-workspace-
 import type { WorkspaceRoot } from "../core/paths/workspace-root.js";
 import { UnknownSectionError } from "../core/scope/unknown-section-error.js";
 import { UntrackedDocError } from "../core/scope/untracked-doc-error.js";
+import { SectionWriteError } from "../core/sections/section-write-error.js";
 import { locateWorkspace } from "../core/workspace/locate-workspace.js";
 import { readWorkspaceConfig } from "../core/workspace/read-workspace-config.js";
 import type { WorkspaceConfig } from "../core/workspace/workspace-config.js";
@@ -67,8 +68,11 @@ function describeToolError( error: unknown, root: WorkspaceRoot | undefined ): s
 	if( error instanceof UnknownSectionError && error.reason === "not-a-heading" ) {
 		return `${error.message}. get_status with this doc lists its section keys.`;
 	}
+	if( error instanceof UntrackedDocError ) {
+		return `${error.message}. Propose a scope with set_scope to track it.`;
+	}
 	if(
-		error instanceof UnknownSectionError || error instanceof UntrackedDocError ||
+		error instanceof UnknownSectionError || error instanceof SectionWriteError ||
 		error instanceof ReservedDocPathError || error instanceof ManifestError ||
 		error instanceof ManifestWriteError || error instanceof TrackedFieldsError
 	) {

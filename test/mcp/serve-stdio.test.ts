@@ -90,7 +90,7 @@ describe( "docctx serve over stdio", () => {
 		try {
 			const { tools } = await client.listTools();
 			expect( tools.map( ( tool ) => tool.name ) )
-				.toEqual( [ "get_status", "read_section", "get_scope", "set_scope" ] );
+				.toEqual( [ "get_status", "read_section", "get_scope", "set_scope", "write_section" ] );
 			const status = await callToolJson( client, "get_status", {} );
 			expect( status ).toMatchObject( { "workspace": fixturePath( "basic" ) } );
 			const args = { "doc": "docs/auth/overview.md", "content": true };
