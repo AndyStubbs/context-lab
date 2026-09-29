@@ -3,6 +3,7 @@ import { runCli } from "./program.js";
 
 process.exitCode = await runCli( process.argv.slice( 2 ), {
 	"cwd": process.cwd(),
+	"env": process.env,
 	"stdout": ( text ) => {
 		process.stdout.write( text );
 	},

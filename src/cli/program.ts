@@ -9,6 +9,7 @@ import { ManifestError } from "../core/yaml/manifest-error.js";
 import type { CliIo } from "./cli-io.js";
 import { registerInitCommand } from "./commands/init.js";
 import { registerScopeCommand } from "./commands/scope.js";
+import { registerServeCommand } from "./commands/serve.js";
 
 /** Exit codes shared by every command (CONV_TYPESCRIPT.md, CLI). */
 const EXIT_OK = 0;
@@ -22,15 +23,17 @@ const EXIT_USAGE = 2;
 export function createProgram( io: CliIo ): Command {
 
 	// Output and exit settings go first, so subcommands inherit them
+	const version = readPackageVersion();
 	const program = new Command();
 	program
 		.name( "docctx" )
 		.description( "Declare the sources and context for each doc and section, and flag stale sections." )
-		.version( readPackageVersion() )
+		.version( version )
 		.exitOverride()
 		.configureOutput( { "writeOut": io.stdout, "writeErr": io.stderr } );
 	registerInitCommand( program, io );
 	registerScopeCommand( program, io );
+	registerServeCommand( program, io, version );
 	return program;
 }
 

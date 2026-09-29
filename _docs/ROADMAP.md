@@ -169,21 +169,21 @@ Phase 3 lands as five PRs, ordered so the server and its test harness exist befo
 ### Work items
 
 **Server**
-- [ ] stdio server using the official TypeScript MCP SDK. All logging goes to stderr.
-- [ ] Resolve the workspace from the server's working directory, with an optional argument or environment variable to override it.
+- [x] stdio server using the official TypeScript MCP SDK. All logging goes to stderr.
+- [x] Resolve the workspace from the server's working directory, with an optional argument or environment variable to override it.
 
-- [ ] `instructions` field with a short summary of the operating model (§5, §14): propose scopes through `set_scope`, never edit `.docctx/` files directly, and only make claims the sources support. Keep it under 2 KB, Claude Code's cap, and add a test that fails if it grows past that.
-- [ ] `docctx serve` subcommand that starts the stdio server.
+- [ ] `instructions` field with a short summary of the operating model (§5, §14): propose scopes through `set_scope`, never edit `.docctx/` files directly, and only make claims the sources support. Keep it under 2 KB, Claude Code's cap, and add a test that fails if it grows past that. The field and its test landed in PR 1; it names only tools that exist, so the `set_scope` line lands with PR 2.
+- [x] `docctx serve` subcommand that starts the stdio server.
 - [ ] Detect at connection whether the client supports elicitation, and choose the approval path for `set_scope` from that (§14.2).
 
 **Tools (§14.1, M1 subset)**
-- [ ] `get_status`: workspace summary, or a doc's outline. Section states come in Phase 4.
-- [ ] `read_section`
-- [ ] `get_scope`, including `content: true`. Above `max_context_bytes`, return paths, sizes and a warning instead of contents. Never truncate (§14.1).
+- [x] `get_status`: workspace summary, or a doc's outline. Section states come in Phase 4.
+- [x] `read_section`
+- [x] `get_scope`, including `content: true`. Above `max_context_bytes`, return paths, sizes and a warning instead of contents. Never truncate (§14.1).
 - [ ] `set_scope`: validate the proposal, resolve it, ask the user through elicitation, and write the manifest only on accept. Without elicitation, return the preview and accept `user_decision` and an optional `user_note` on a second call. With elicitation, reject both parameters (§14.2).
 - [ ] Elicitation messages of at most three lines, naming the doc, the section, the files and the resolved size.
 - [ ] `write_section`: save the previous content to section history, then rewrite only that section's line range (§18).
-- [ ] Expected failures returned as `isError: true` results. Descriptions kept to one or two sentences.
+- [x] Expected failures returned as `isError: true` results. Descriptions kept to one or two sentences.
 
 **Prompts (§14.3)**
 - [ ] `draft-section`: resolved scope, audience, style guide and glossary, plus the instruction to only make claims the sources support and to say so when they don't.
