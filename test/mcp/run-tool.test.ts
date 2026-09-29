@@ -37,7 +37,9 @@ describe( "tool errors", () => {
 	it( "reports an untracked doc", async () => {
 
 		const message = await expectToolError( "get_scope", { "doc": "docs/_style.md" } );
-		expect( message ).toBe( "Doc is not tracked (it has no manifest): \"docs/_style.md\"" );
+		expect( message ).toBe(
+			"Doc is not tracked (it has no manifest): \"docs/_style.md\". Propose a scope with set_scope to track it."
+		);
 	} );
 
 	it( "points to get_status for an unknown section", async () => {

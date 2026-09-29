@@ -4,6 +4,7 @@ import { registerGetScope } from "./tools/get-scope.js";
 import { registerGetStatus } from "./tools/get-status.js";
 import { registerReadSection } from "./tools/read-section.js";
 import { registerSetScope } from "./tools/set-scope.js";
+import { registerWriteSection } from "./tools/write-section.js";
 
 /** How the server finds its workspace and describes itself. */
 export interface ServerOptions {
@@ -26,5 +27,6 @@ export function createServer( options: ServerOptions ): McpServer {
 	registerReadSection( server, options.startDir );
 	registerGetScope( server, options.startDir );
 	registerSetScope( server, options.startDir );
+	registerWriteSection( server, options.startDir );
 	return server;
 }

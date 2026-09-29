@@ -205,7 +205,7 @@ Phase 3 lands as five PRs, ordered so the server and its test harness exist befo
 - [x] `get_scope`, including `content: true`. Above `max_context_bytes`, return paths, sizes and a warning instead of contents. Never truncate (§14.1).
 - [x] `set_scope`: validate the proposal, resolve it, ask the user through elicitation, and write the manifest only on accept. Without elicitation, return the preview and a `preview_token`, and accept `user_decision` with the token on a second call. With elicitation, reject both parameters (§14.2).
 - [x] Elicitation messages of at most three lines, naming the doc, the section, the files and the resolved size.
-- [ ] `write_section`: save the previous content to section history, then rewrite only that section's line range (§18).
+- [x] `write_section`: save the previous content to section history, then rewrite only that section's line range (§18).
 - [x] Expected failures returned as `isError: true` results. Descriptions kept to one or two sentences.
 
 **Prompts (§14.3)**
