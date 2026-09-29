@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-ContextLabs has finished Phase 0 (foundations), Phase 1 (file format and scope) and Phase 2 (cache and section history) of [_docs/ROADMAP.md](_docs/ROADMAP.md); Phase 3 (MCP server) is next. The project builds, lints and tests, and contains:
+ContextLabs has finished Phase 0 (foundations), Phase 1 (file format and scope) and Phase 2 (cache and section history) of [_docs/ROADMAP.md](_docs/ROADMAP.md), and is partway through Phase 3 (MCP server), which lands as the five PRs in its delivery plan. The project builds, lints and tests, and contains:
 
 - the path confinement helper (`WorkspaceRoot` in `src/core/paths/`)
 - workspace discovery and `workspace.yaml` parsing (`src/core/workspace/`), and manifest parsing (`src/core/manifest/`). Both validate with file:line:column errors (`ManifestError`, `src/core/yaml/`).
@@ -13,7 +13,9 @@ ContextLabs has finished Phase 0 (foundations), Phase 1 (file format and scope) 
 - scope resolution (`src/core/scope/`): the §9 merge with a reason per file, excluded files and why, type rules via `listManifests`, size budget; `loadScope` is the entry point
 - the disposable cache (`WorkspaceCache` in `src/core/cache/`): file fingerprints with the §13 pre-check; loads empty when missing, corrupt or stale, and a failed save never fails a command
 - section history (`SectionHistory` in `src/core/history/`): numbered versions under `.docctx/.history/`, saved only by `write_section` (Phase 3)
-- the `docctx` CLI with `init` and `scope` (`src/cli/`); `runCli` returns the exit code so tests run commands in-process
+- doc and workspace status (`loadDocStatus`, `loadWorkspaceStatus` in `src/core/status/`) and section text (`loadSection` in `src/core/sections/`), which the read tools wrap
+- the MCP server (`src/mcp/`): `createServer` registers `get_status`, `read_section` and `get_scope`, and `serveStdio` runs it. Every tool body goes through `runTool`, which finds the workspace on each call and turns expected core errors into `isError` results. Output follows ROADMAP.md Phase 3's settled decisions: compact `snake_case` JSON for metadata, and plain-text blocks for file contents.
+- the `docctx` CLI with `init`, `scope` and `serve` (`src/cli/`); `runCli` returns the exit code so tests run commands in-process
 - fixture workspaces at `test/fixtures/basic/` and `test/fixtures/scope/`, with golden files in `test/core/scope/__golden__/` (JSON) and `test/cli/__golden__/` (the explain view). After an intended output change, regenerate them with `npx vitest run -u` and review the diff.
 
 The spec is [_docs/DESIGN.md](_docs/DESIGN.md) (draft v0.5), and it is authoritative. Read the relevant section before implementing anything.
@@ -32,6 +34,7 @@ npx vitest run test/core/paths/workspace-root.test.ts            # one file
 npx vitest run test/core/paths/workspace-root.test.ts -t symlink # tests whose name matches
 node dist/cli/main.js init [dir]                  # set up a workspace; safe to re-run
 node dist/cli/main.js scope <doc> [section]       # explain a scope; --json for the raw result
+node dist/cli/main.js serve [--workspace <dir>]   # MCP over stdio; DOCCTX_WORKSPACE also sets the workspace
 ```
 
 CLI exit codes: `0` success (warnings included), `1` error (untracked doc, unknown section, invalid manifest, path outside the workspace, no workspace found), `2` usage error. Paths on the command line are relative to the current directory.
@@ -41,7 +44,7 @@ Layout:
 - `src/core/` is the core library. ESLint fails if it imports `cli/`, `mcp/`, the MCP SDK or `commander`.
 - `src/cli/` holds the `docctx` commands.
 - `src/mcp/` holds the MCP server. `no-console` is on there, except for `console.error` and `console.warn`.
-- Tests live in `test/`, mirroring `src/`. Fixture workspaces are in `test/fixtures/`, which typecheck and lint skip.
+- Tests live in `test/`, mirroring `src/`. Fixture workspaces are in `test/fixtures/`, which typecheck and lint skip. `copyFixture` (`test/helpers/scratch-fixture.ts`) gives a test a scratch copy to break, and `connectClient` (`test/helpers/mcp-client.ts`) connects an SDK client over an in-memory transport. `test/mcp/serve-stdio.test.ts` builds `dist/` itself and runs the real binary.
 - Every path from a manifest, tool argument or CLI argument goes through `WorkspaceRoot.resolve()`. Only its `absolute` result is passed to `fs`. Its `relative` result (forward slashes) is the path's identity.
 
 Follow [_docs/CONV_TYPESCRIPT.md](_docs/CONV_TYPESCRIPT.md) for all TypeScript. Its house style differs from common defaults: tabs, required semicolons, spaces inside parentheses (`if( x )`, `call( a, b )`), double quotes only, no ternaries, `m_` prefix on instance fields, and snake_case wire names for manifest, lock file and cache fields. Two rules are easy to miss: never write to stdout in the MCP server (it carries JSON-RPC), and use the `yaml` `Document` API when writing manifests back.

@@ -14,6 +14,7 @@ export async function runDocctx( cwd: string, ...argv: readonly string[] ): Prom
 	let stderr = "";
 	const code = await runCli( argv, {
 		"cwd": cwd,
+		"env": {},
 		"stdout": ( text ) => {
 			stdout += text;
 		},

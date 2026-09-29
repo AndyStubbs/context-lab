@@ -1,10 +1,5 @@
-import type {
-	ExclusionReason,
-	ResolvedScope,
-	ScopeEntry,
-	ScopeReason,
-	ScopeWarning
-} from "../core/scope/resolved-scope.js";
+import { describeExclusion, describeReason, describeReplaced } from "../core/scope/describe-scope.js";
+import type { ResolvedScope, ScopeEntry, ScopeWarning } from "../core/scope/resolved-scope.js";
 import { formatBytes } from "./format-bytes.js";
 
 const INDENT = "  ";
@@ -52,7 +47,7 @@ export function formatScope( scope: ResolvedScope, maxBytes: number ): string {
 		groups.push( `Excluded\n${lines.join( "" )}` );
 	}
 	if( scope.replaced.length > 0 ) {
-		const lines = scope.replaced.map( ( replaced ) => `${INDENT}${replaced.rule}, by ${replaced.by}\n` );
+		const lines = scope.replaced.map( ( replaced ) => `${INDENT}${describeReplaced( replaced )}\n` );
 		groups.push( `Replaced\n${lines.join( "" )}` );
 	}
 	if( scope.warnings.length > 0 ) {
@@ -86,24 +81,6 @@ function formatRow( prefix: string, details: readonly string[] ): string {
 		}
 		return `${continuation}${detail}\n`;
 	} ).join( "" );
-}
-
-function describeReason( reason: ScopeReason ): string {
-	return `${reason.rule}: ${reason.pattern}`;
-}
-
-function describeExclusion( reason: ExclusionReason ): string {
-
-	switch( reason.kind ) {
-		case "pattern":
-			return `${reason.rule}: ${reason.pattern}`;
-		case "type-rule":
-			return `${reason.rule} (status ${reason.status})`;
-		case "untracked-status":
-			return `status unknown: ${reason.manifest} is invalid`;
-		case "outside-workspace":
-			return "leads outside the workspace";
-	}
 }
 
 function describeWarning( warning: ScopeWarning ): readonly string[] {

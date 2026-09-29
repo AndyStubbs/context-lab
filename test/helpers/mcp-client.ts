@@ -1,0 +1,49 @@
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { createServer } from "../../src/mcp/create-server.js";
+
+/** A tool result reduced to what tests check: the error flag and each text block. */
+export interface ToolOutput {
+	readonly isError: boolean;
+	readonly texts: readonly string[];
+}
+
+/**
+ * Connects an SDK client to a fresh server over an in-memory transport. The server looks up
+ * its workspace from `startDir`. Close the client when done.
+ */
+export async function connectClient( startDir: string ): Promise<Client> {
+
+	const server = createServer( { "startDir": startDir, "version": "0.0.0-test" } );
+	const [ clientTransport, serverTransport ] = InMemoryTransport.createLinkedPair();
+	await server.connect( serverTransport );
+	const client = new Client( { "name": "docctx-test", "version": "0.0.0" } );
+	await client.connect( clientTransport );
+	return client;
+}
+
+/** Calls a tool and returns its text blocks. */
+export async function callTool( client: Client, name: string, args: Record<string, unknown> ): Promise<ToolOutput> {
+
+	const result = await client.callTool( { "name": name, "arguments": args } );
+	const content: unknown = result.content;
+	const texts: string[] = [];
+	if( Array.isArray( content ) ) {
+		for( const block of content as unknown[] ) {
+			if( typeof block === "object" && block !== null && "text" in block && typeof block.text === "string" ) {
+				texts.push( block.text );
+			}
+		}
+	}
+	return { "isError": result.isError === true, "texts": texts };
+}
+
+/** Calls a tool that must succeed and parses its first block as JSON. */
+export async function callToolJson( client: Client, name: string, args: Record<string, unknown> ): Promise<unknown> {
+
+	const output = await callTool( client, name, args );
+	if( output.isError ) {
+		throw new Error( `${name} failed: ${output.texts.join( "\n" )}` );
+	}
+	return JSON.parse( output.texts[ 0 ] ?? "" );
+}
