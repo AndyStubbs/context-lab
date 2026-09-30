@@ -12,6 +12,7 @@ import type { ScopePreview } from "../../core/scope/preview-scope-change.js";
 import { previewScopeChange } from "../../core/scope/preview-scope-change.js";
 import type { WorkspaceConfig } from "../../core/workspace/workspace-config.js";
 import { previewToken } from "../preview-token.js";
+import type { ApprovalMode } from "../create-server.js";
 import { runTool } from "../run-tool.js";
 import { scopeApprovalMessage } from "../scope-approval-message.js";
 import { formatScopeResult } from "../scope-result.js";
@@ -42,18 +43,27 @@ const INPUT_SCHEMA = {
 
 type SetScopeArgs = z.infer<z.ZodObject<typeof INPUT_SCHEMA>>;
 
-const NEXT_STEP = "Show the user this message and ask them to accept or decline. Then call set_scope " +
-	"again with the same arguments, user_decision and preview_token.";
+/**
+ * A client can advertise elicitation and answer every request itself, as Claude Code does in
+ * print mode, so a decline may not be the user's. The server can't tell; the user can.
+ */
+const UNSEEN_FORM_NOTE = "If the user saw no approval form, their client doesn't show elicitation forms. " +
+	"Ask them to add --approvals chat to the server's command in their MCP config; don't retry until then.";
+
+// The AI expected a form in the manual check, and read the preview as a failure
+const NEXT_STEP = "This preview is the approval step: show the user this message and ask them to accept or " +
+	"decline. Then call set_scope again with the same arguments, user_decision and preview_token.";
 
 /**
  * Registers `set_scope`: validates a proposed scope for a doc or section, asks the user, and
  * writes the manifest only if they accept (DESIGN.md §14.2; ROADMAP.md Phase 3, PR 2).
  *
  * With elicitation, the server asks the user itself and rejects `user_decision` and
- * `preview_token`. Without it, the first call returns a preview and a token, and a second call
- * with the user's decision and that token writes or drops the change.
+ * `preview_token`. Without it, or when the user started the server with `--approvals chat`,
+ * the first call returns a preview and a token, and a second call with the user's decision and
+ * that token writes or drops the change.
  */
-export function registerSetScope( server: McpServer, startDir: string ): void {
+export function registerSetScope( server: McpServer, startDir: string, approvals: ApprovalMode ): void {
 
 	server.registerTool( "set_scope", {
 		"description": "Proposes sources, context or excludes for a doc or section; the user approves before " +
@@ -62,7 +72,8 @@ export function registerSetScope( server: McpServer, startDir: string ): void {
 		"inputSchema": INPUT_SCHEMA
 	}, async ( args ) => runTool( startDir, async ( { root, config } ) => {
 
-		const canElicit = server.server.getClientCapabilities()?.elicitation?.form !== undefined;
+		const canElicit = approvals === "auto" &&
+			server.server.getClientCapabilities()?.elicitation?.form !== undefined;
 		if( canElicit && ( args.user_decision !== undefined || args.preview_token !== undefined ) ) {
 			return errorResult(
 				"This client supports elicitation, so the server asks the user directly. " +
@@ -125,9 +136,17 @@ async function askUser(
 		case "accept":
 			return write( root, preview );
 		case "decline":
-			return { "content": [ jsonBlock( { "result": "declined", "manifest": preview.update.path } ) ] };
+			return { "content": [ jsonBlock( {
+				"result": "declined",
+				"manifest": preview.update.path,
+				"note": UNSEEN_FORM_NOTE
+			} ) ] };
 		case "cancel":
-			return { "content": [ jsonBlock( { "result": "cancelled", "manifest": preview.update.path } ) ] };
+			return { "content": [ jsonBlock( {
+				"result": "cancelled",
+				"manifest": preview.update.path,
+				"note": UNSEEN_FORM_NOTE
+			} ) ] };
 	}
 }
 

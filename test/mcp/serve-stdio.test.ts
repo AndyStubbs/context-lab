@@ -119,6 +119,13 @@ describe( "docctx serve over stdio", () => {
 		expect( ids.sort() ).toEqual( [ 1, 2 ] );
 	} );
 
+	it( "says on stderr when approvals are forced through chat", async () => {
+
+		const result = await runServe( [ "--workspace", fixturePath( "basic" ), "--approvals", "chat" ], "" );
+		expect( result.code ).toBe( 0 );
+		expect( result.stderr ).toContain( "approvals go through chat (--approvals chat)" );
+	} );
+
 	it( "starts without a workspace and says so on stderr", async () => {
 
 		const empty = await realpath( await mkdtemp( path.join( tmpdir(), "docctx-serve-" ) ) );

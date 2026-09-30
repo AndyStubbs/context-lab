@@ -2,6 +2,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { ElicitRequest, ElicitResult } from "@modelcontextprotocol/sdk/types.js";
 import { ElicitRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import type { ApprovalMode } from "../../src/mcp/create-server.js";
 import { createServer } from "../../src/mcp/create-server.js";
 
 /** A tool result reduced to what tests check: the error flag and each text block. */
@@ -18,10 +19,15 @@ export type ElicitHandler = ( params: ElicitRequest[ "params" ] ) => ElicitResul
  * its workspace from `startDir`. Close the client when done.
  *
  * @param elicit When given, the client declares elicitation support and answers with it.
+ * @param approvals The server's approval mode; `auto` when omitted.
  */
-export async function connectClient( startDir: string, elicit?: ElicitHandler ): Promise<Client> {
+export async function connectClient(
+	startDir: string,
+	elicit?: ElicitHandler,
+	approvals: ApprovalMode = "auto"
+): Promise<Client> {
 
-	const server = createServer( { "startDir": startDir, "version": "0.0.0-test" } );
+	const server = createServer( { "startDir": startDir, "version": "0.0.0-test", "approvals": approvals } );
 	const [ clientTransport, serverTransport ] = InMemoryTransport.createLinkedPair();
 	await server.connect( serverTransport );
 	const client = createClient( elicit );
