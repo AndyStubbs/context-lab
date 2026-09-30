@@ -96,7 +96,8 @@ describe( "set_scope with elicitation", () => {
 		for( const [ action, outcome ] of outcomes ) {
 			const client = await connectAnswering( action );
 			const result = await callToolJson( client, "set_scope", SETUP_SOURCES );
-			expect( result ).toEqual( { "result": outcome, "manifest": MANIFEST } );
+			expect( result ).toMatchObject( { "result": outcome, "manifest": MANIFEST } );
+			expect( ( result as { readonly note: string } ).note ).toContain( "--approvals chat" );
 			await client.close();
 		}
 		expect( await readManifest() ).toBe( before );
@@ -170,6 +171,27 @@ describe( "set_scope with elicitation", () => {
 	} );
 } );
 
+describe( "set_scope with --approvals chat", () => {
+
+	it( "uses the chat fallback even when the client offers elicitation", async () => {
+
+		m_client = await connectClient( m_scratch, ( params ) => {
+			m_asked.push( params );
+			return { "action": "decline" };
+		}, "chat" );
+		const preview = await callToolJson( m_client, "set_scope", SETUP_SOURCES ) as Record<string, unknown>;
+		expect( preview[ "result" ] ).toBe( "preview" );
+
+		const written = await callToolJson( m_client, "set_scope", {
+			...SETUP_SOURCES,
+			"user_decision": "accept",
+			"preview_token": preview[ "preview_token" ]
+		} );
+		expect( written ).toMatchObject( { "result": "written" } );
+		expect( m_asked ).toEqual( [] );
+	} );
+} );
+
 describe( "set_scope without elicitation", () => {
 
 	it( "returns a preview and token first, then writes on an accepted decision with that token", async () => {
@@ -193,6 +215,7 @@ describe( "set_scope without elicitation", () => {
 			}
 		} );
 		expect( preview[ "preview_token" ] ).toMatch( /^[0-9a-f]{16}$/ );
+		expect( preview[ "next" ] ).toMatch( /^This preview is the approval step: show the user this message/ );
 		expect( await readManifest() ).toBe( before );
 
 		const written = await callToolJson( client, "set_scope", {

@@ -481,6 +481,8 @@ Messages are at most three lines and always name the doc, the section, the files
 
 **Fallback.** If the client does not support elicitation, these tools return the preview, a `preview_token`, and a note telling the AI to ask the user in chat. The AI then calls the tool again with the same arguments, the token, and `user_decision` (an enum with the same choices as the elicitation form). The token is a short hash of what the preview showed, recomputed by the server, so an approval applies only to the preview the user saw: a decision without a token is refused, and so is one whose token no longer matches because the manifest or the resolved files changed. `confirm_section` also takes an optional `user_note`, and its record stores `via: chat`. When the client does support elicitation, the server rejects `user_decision`, `user_note` and `preview_token`, so the AI can't skip asking the user. Claude Desktop has no elicitation (§19), so for its users this fallback is the main path and gets the same care and testing.
 
+**Clients that advertise elicitation but never show it.** Claude Code in print mode, which the Claude desktop app's Code tab uses, declares elicitation support and then declines every request itself, without showing the form (§19). The server can't tell that decline from the user's, so declined and cancelled results say that a user who saw no form should switch approvals to chat. The user does that with `docctx serve --approvals chat` (or `DOCCTX_APPROVALS=chat`) in the client's MCP config: the server then uses this fallback whatever the client advertises. The setting lives where the user configures the server, so the AI still can't opt out of asking.
+
 **Scope approvals are not recorded.** A `set_scope` approval leaves no record beyond the changed scope itself, which the committed YAML diff shows. The manifest has no field for who approved a scope, so `set_scope` takes no `user_note`. Only verifications record who decided and how (§13).
 
 ### 14.3 Prompts (user-controlled)
@@ -573,12 +575,14 @@ MCP clients support prompts and elicitation unevenly, more so than tools. v1 tar
 
 | Client           | Tools | Prompts            | Elicitation                     | Plugin extras |
 | ---------------- | ----- | ------------------ | ------------------------------- | ------------- |
-| Claude Code      | ✓     | ✓ (slash commands) | ✓ (since v2.1.76)               | ✓             |
+| Claude Code      | ✓     | ✓ (slash commands) | ✓ interactive (since v2.1.76); ✗ print mode¹ | ✓             |
 | Claude Desktop   | ✓     | ✓                  | ✗ (chat fallback, `via: chat`)  | —             |
 | Cursor           | ✓     | verify             | ✓ (since v1.5)                  | —             |
 | VS Code          | ✓     | verify             | verify                          | —             |
 
-Elicitation status was checked in September 2026 against client changelogs and issue trackers. Claude Code shows MCP prompts as `/mcp__<server>__<prompt>`, for example `/mcp__contextlabs__draft-section`.
+Elicitation status was checked in September 2026 against client changelogs and issue trackers.
+
+¹ Found in the Phase 3 manual check (v2.1.241): in print mode, which the Claude desktop app's Code tab uses, Claude Code advertises elicitation but declines every request without showing it. Run the server with `--approvals chat` there (§14.2). Claude Code shows MCP prompts as `/mcp__<server>__<prompt>`, for example `/mcp__contextlabs__draft-section`.
 
 Where a client lacks prompt support, each prompt has an equivalent documented workflow using tools plus a short instruction the user can paste. Where it lacks elicitation, approvals fall back to chat (§14.2). Support should be re-checked at build time, since clients change quickly.
 

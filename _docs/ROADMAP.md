@@ -199,6 +199,10 @@ Phase 3 lands as five PRs, ordered so the server and its test harness exist befo
   4. **Both prompts include the current section and its hash, and the model writes with `write_section`.** The section comes with `read_section`'s header, hash and subsections included; `draft-section` needs it too, since the section may be a stub and the heading and hash are what `write_section` requires. `draft-section` asks for the section written from the sources; `revise-section` asks for a targeted change following the user's `instruction`, keeping the rest. Both end by writing with `write_section`, then summarizing what changed and listing any claims the sources didn't support. There is no "show the draft and wait" step: history keeps the old text, the diff is reviewable, the client asks permission for the tool call, and verification is separate (Phase 4).
   5. **Arguments and completion follow the tools.** `draft-section` takes `doc` and `section`, and `revise-section` adds a required `instruction`. `section` is optional only for docs without sections, as with `read_section`, and untracked docs get an error pointing to `set_scope`. `doc` completes tracked docs, matched case-insensitively on any part of the path, sorted, and capped at the protocol's 100 values. `section` completes the chosen doc's keys the same way. Completion returns an empty list, never an error, when it can't resolve (a doc still being typed, an invalid manifest).
 
+**Follow-up from the manual check, `--approvals chat`:** Claude Code in print mode, which the Claude desktop app's Code tab uses, advertises elicitation but declines every request without showing it, so every `set_scope` came back declined, and the chat fallback was refused because the client advertised elicitation. `docctx serve --approvals chat` (or `DOCCTX_APPROVALS=chat`) makes the server use the chat fallback whatever the client advertises. It is set in the client's MCP config, so the AI still can't opt out of asking. Declined and cancelled results now say that a user who saw no form should set it. Guessing from how fast a decline arrives was rejected: it is fragile, and a fast real decline would move to a path where the AI supplies the answer (DESIGN.md §14.2, §19).
+
+- [x] `--approvals auto|chat` on `docctx serve`, with `DOCCTX_APPROVALS`, and the hint on declined and cancelled results.
+
 ### Work items
 
 **Server**
@@ -234,7 +238,7 @@ Measured on 2026-09-29 from the built server's `initialize`, `tools/list` and `p
 
 | Item                          | Bytes | Of which descriptions |
 | ----------------------------- | ----: | --------------------: |
-| `instructions`                |   963 |                     — |
+| `instructions`                | 1,003 |                     — |
 | `get_status`                  |   478 |                   170 |
 | `read_section`                |   617 |                   179 |
 | `get_scope`                   |   691 |                   185 |
@@ -244,7 +248,7 @@ Measured on 2026-09-29 from the built server's `initialize`, `tools/list` and `p
 | `draft-section` (prompt)      |   326 |                     — |
 | `revise-section` (prompt)     |   410 |                     — |
 
-- Tools and `instructions` together are about 5 KB. At 3 to 4 bytes per token, that is roughly 1,200 to 1,700 tokens; clients render definitions in their own format, so the real count comes from the client (`/context` in Claude Code, recorded in the manual check).
+- `instructions` was 963 bytes when measured, and 1,003 after the `--approvals chat` follow-up said how `set_scope` asks. Tools and `instructions` together are about 5 KB. At 3 to 4 bytes per token, that is roughly 1,200 to 1,700 tokens; clients render definitions in their own format, so the real count comes from the client (`/context` in Claude Code, recorded in the manual check).
 - The SDK adds 94 bytes to every tool (`"$schema"` in the input schema, and `"execution"`), 470 bytes in all. Dropping them would need hand-written JSON schemas instead of zod; not worth it now.
 - `set_scope` is the largest, at 38% of the tool bytes, mostly its argument schema (the `context` union and nullable lists). Its description is at the two-sentence limit.
 - Prompt definitions don't reach the model: the client lists them for its menu, and only an invoked prompt's message enters the conversation.

@@ -13,6 +13,9 @@ import { createServer } from "./create-server.js";
 export async function serveStdio( options: ServerOptions ): Promise<void> {
 
 	await logWorkspace( options.startDir );
+	if( options.approvals === "chat" ) {
+		console.error( "contextlabs: approvals go through chat (--approvals chat), even if the client offers forms" );
+	}
 	const server = createServer( options );
 
 	// The transport doesn't notice the client leaving. Closing it here would drop the results

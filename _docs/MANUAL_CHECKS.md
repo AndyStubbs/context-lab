@@ -49,6 +49,10 @@ Claude Desktop: add the `contextlabs` entry to `claude_desktop_config.json` (`~/
 
 If the server doesn't show up, the path to `node` is the usual cause: Claude Desktop can't find a bare `"command": "node"` installed through nvm.
 
+**Claude Code in the desktop app's Code tab** runs Claude Code in print mode, which declines elicitation requests without showing them. Add `--approvals chat` to the end of the server command there, or `set_scope` proposals all come back declined. The C steps below are for `claude` in a terminal, which does show the forms.
+
+A session keeps the server process it started with, so a changed registration, or a rebuilt `dist/`, only reaches new sessions, or an existing one after it reconnects the server from `/mcp`. The server's first stderr lines, in the client's MCP log, show which options it started with.
+
 To start over between runs: `cd ~/docctx-check && git checkout -- . && git clean -fdq`, which keeps the gitignored `.docctx/.history/`, so delete it too for a clean slate.
 
 ## Claude Code
@@ -80,3 +84,13 @@ To start over between runs: `cd ~/docctx-check && git checkout -- . && git clean
 ## Results
 
 Record each run here: date, client and version, the step numbers that passed, and anything that surprised you. Failures and friction also go in the Phase 5 friction log once it exists.
+
+### 2026-09-30, Claude Code v2.1.241 in the Claude desktop app's Code tab
+
+- C4: no form appeared. The client log showed `Elicitation request received in print mode`, and the server got `decline` 4 ms later. In print mode, Claude Code advertises elicitation but declines every request. Fixed by the `--approvals chat` option (DESIGN.md §14.2, §19); the other C steps are to be run in a terminal.
+
+### 2026-09-30, the same client with `--approvals chat`
+
+- D2 and D3 (run in the Code tab): passed. `set_scope` returned a preview and a token, the AI stopped and asked, and after "accept" the second call wrote the manifest (`docs/_error-format.md` added to `context`).
+- The AI first read the preview as a failure ("this client isn't getting the server's approval dialog"), because `instructions` only said `set_scope` "asks the user". `instructions` and the preview's `next` now say the preview is the approval step.
+- The AI paraphrased the preview, with the resolved sources and context listed, rather than showing the three-line message as written. The paraphrase was accurate, so it's left as is.
