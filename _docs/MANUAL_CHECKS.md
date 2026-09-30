@@ -20,26 +20,34 @@ cd ~/docctx-check && git init -q && git add -A && git commit -qm "Start" && cd -
 
 `init` is safe on an existing workspace: it only adds the `.gitignore` and `.gitattributes` lines.
 
-**3. Register the server.** Use absolute paths. Clients don't load your shell profile, so with nvm, `node` must be the full path from `which node`.
+**3. Register the server.** Clients start the server without loading your shell profile, so every path must be absolute. Replace these placeholders below:
 
-Claude Code, from inside `~/docctx-check`:
+| Placeholder | What it is | How to find it |
+| ----------- | ---------- | -------------- |
+| `<node>` | The full path to the `node` program. With nvm it looks like `/home/you/.nvm/versions/node/v24.19.0/bin/node`, and it changes when you switch Node versions. | `which node` (`where node` on Windows) |
+| `<repo>` | The context-lab checkout, such as `/home/you/src/context-lab`. | `pwd` in the repo root |
+| `<workspace>` | The scratch workspace from step 2, such as `/home/you/docctx-check`. JSON doesn't expand `~`, so write it out. | `echo ~/docctx-check` |
+
+Claude Code, from inside the scratch workspace. The shell expands `$(which node)` and `~` here, so only `<repo>` needs replacing:
 
 ```bash
-claude mcp add contextlabs -- "$(which node)" /path/to/context-lab/dist/cli/main.js serve --workspace ~/docctx-check
+claude mcp add contextlabs -- "$(which node)" <repo>/dist/cli/main.js serve --workspace ~/docctx-check
 ```
 
-Claude Desktop: add this to `claude_desktop_config.json` (`~/.config/Claude/` on Linux, `~/Library/Application Support/Claude/` on macOS, `%APPDATA%\Claude\` on Windows), then restart Claude Desktop:
+Claude Desktop: add the `contextlabs` entry to `claude_desktop_config.json` (`~/.config/Claude/` on Linux, `~/Library/Application Support/Claude/` on macOS, `%APPDATA%\Claude\` on Windows), inside its `mcpServers` block if it already has one, then restart Claude Desktop:
 
 ```json
 {
 	"mcpServers": {
 		"contextlabs": {
-			"command": "/absolute/path/to/node",
-			"args": [ "/path/to/context-lab/dist/cli/main.js", "serve", "--workspace", "/home/you/docctx-check" ]
+			"command": "<node>",
+			"args": [ "<repo>/dist/cli/main.js", "serve", "--workspace", "<workspace>" ]
 		}
 	}
 }
 ```
+
+If the server doesn't show up, the path to `node` is the usual cause: Claude Desktop can't find a bare `"command": "node"` installed through nvm.
 
 To start over between runs: `cd ~/docctx-check && git checkout -- . && git clean -fdq`, which keeps the gitignored `.docctx/.history/`, so delete it too for a clean slate.
 
